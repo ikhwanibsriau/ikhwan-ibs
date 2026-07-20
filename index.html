@@ -489,7 +489,7 @@
     </div>
 
     <script>
-        // MASUKKAN URL API KAMU DI SINI (DARI GOOGLE APPS SCRIPT DEPLOYMENT TERBARU)
+        // MASUKKAN URL API KAMU DI SINI (DARI GOOGLE APPS SCRIPT)
         const API_URL = "https://script.google.com/macros/s/AKfycby007mXt-2sptjAsCgtEsMGlZMMytRVAWzOM87eopYdiyp0Qx5obG0D9IZ5eIUzQMQg/exec"; 
 
         // State Management
@@ -531,17 +531,19 @@
         const hideLoad = () => document.getElementById('loader').style.display = 'none';
         const toast = (msg, icon='success') => Swal.fire({toast:true, position:'top-end', icon:icon, title:msg, showConfirmButton:false, timer:3000});
 
-        // API Fetch Helper (Penting untuk mengatasi CORS)
+        // API Fetch Helper
         async function apiCall(data) {
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
+                    redirect: 'follow',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(data)
                 });
+                if (!response.ok) throw new Error("Jaringan bermasalah");
                 return await response.json();
             } catch (err) {
-                console.error(err);
+                console.error("Error API:", err);
                 throw new Error("Gagal terhubung ke server database.");
             }
         }
@@ -555,7 +557,7 @@
             }
         };
 
-        // Fungsi Login pakai API Baru
+        // Fungsi Login
         function handleLogin(e) {
             e.preventDefault();
             showLoad();
@@ -582,44 +584,7 @@
             window.location.reload();
         }
 
-        function setupApp() {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'flex';
-            
-            // Set huruf awal nama user ke dalam avatar profile (MENGGANTIKAN KODE YANG LAMA)
-            if(currentUser && currentUser.nama) {
-                document.getElementById('user-initial').innerText = currentUser.nama.charAt(0).toUpperCase();
-            }
-            
-            if(currentUser && currentUser.role === 'Super Admin') {
-                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
-            }
-            
-            // Tarik data santri untuk Autocomplete
-            apiCall({ action: 'getTableData', sheetName: 'Santri' }).then(res => {
-                if(res.success) listNamaSantri = res.data.map(s => s.nama);
-            });
-
-            navigate('dashboard');
-        }
-// Fungsi Toggle Dark Mode
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const icon = document.querySelector('#darkModeBtn i');
-            
-            // Ganti ikon bulan jadi matahari jika mode gelap aktif
-            if(document.body.classList.contains('dark-mode')) {
-                icon.classList.replace('fa-moon', 'fa-sun');
-                icon.classList.replace('far', 'fas');
-                icon.style.color = '#fbbf24'; // Warna kuning matahari
-            } else {
-                icon.classList.replace('fa-sun', 'fa-moon');
-                icon.classList.replace('fas', 'far');
-                icon.style.color = ''; // Kembali ke warna awal
-            }
-        }
-
-        // Fungsi Konfirmasi Logout dengan SweetAlert
+        // Fungsi Konfirmasi Logout
         function confirmLogout() {
             Swal.fire({
                 title: 'Keluar dari aplikasi?',
@@ -637,10 +602,62 @@
                 }
             })
         }
+
+        // Fungsi Setup Tampilan Setelah Login
+        function setupApp() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'flex';
             
+            // Set inisial pada avatar
+            if(currentUser && currentUser.nama) {
+                document.getElementById('user-initial').innerText = currentUser.nama.charAt(0).toUpperCase();
+            }
+            
+            if(currentUser && currentUser.role === 'Super Admin') {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+            }
+            
+            // Tarik data santri untuk Autocomplete
+            apiCall({ action: 'getTableData', sheetName: 'Santri' }).then(res => {
+                if(res.success) listNamaSantri = res.data.map(s => s.nama);
+            });
+
             navigate('dashboard');
         }
 
+        // Fungsi Show/Hide Password di form login
+        function togglePass() {
+            const passInput = document.getElementById('password');
+            const icon = document.getElementById('eye-icon');
+            
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Fungsi Toggle Dark Mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('#darkModeBtn i');
+            
+            if(document.body.classList.contains('dark-mode')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+                icon.classList.replace('far', 'fas');
+                icon.style.color = '#fbbf24';
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+                icon.classList.replace('fas', 'far');
+                icon.style.color = '';
+            }
+        }
+
+        // Navigasi Antar Menu
         function navigate(view) {
             document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -660,16 +677,12 @@
 
         function loadDashboard() {
             showLoad();
-            
-            // Set nama di banner
             if(currentUser) document.getElementById('dash-nama').innerText = currentUser.nama;
 
             apiCall({ action: 'getDashboardStats' }).then(res => {
                 hideLoad();
                 if(res.success) {
                     const d = res.data;
-                    
-                    // Render 4 Kartu Atas
                     document.getElementById('dash-cards-container').innerHTML = `
                         <div class="dash-card dark">
                             <div class="title">Total Santri Aktif</div>
@@ -693,7 +706,6 @@
                         </div>
                     `;
 
-                    // Render Chart Baru (Bar Chart)
                     if(window.chartDash) window.chartDash.destroy();
                     const ctx = document.getElementById('chartPelanggaranBaru').getContext('2d');
                     window.chartDash = new Chart(ctx, {
@@ -703,15 +715,12 @@
                             datasets: [{ 
                                 label: 'Jumlah Pelanggaran', 
                                 data: d.chartPelData, 
-                                backgroundColor: '#489744', // Menggunakan warna utama 500 yang baru
-                                borderRadius: 5 // Sudut bar chart melengkung
+                                backgroundColor: '#489744', 
+                                borderRadius: 5 
                             }] 
                         },
                         options: { responsive: true, plugins: { legend: { display: false } } }
                     });
-
-                    // (Opsional) Di sini nanti bos bisa menambahkan logika untuk mengisi 
-                    // list 'Pelanggaran Terbaru' dan 'Izin' jika data spesifiknya sudah di-return dari backend.
                 }
             }).catch(err => hideLoad());
         }
@@ -805,21 +814,6 @@
 
         function editData(id) { openModal(id); }
         function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('collapsed'); }
-    // Fungsi untuk Show/Hide Password
-        function togglePass() {
-            const passInput = document.getElementById('password');
-            const icon = document.getElementById('eye-icon');
-            
-            if (passInput.type === 'password') {
-                passInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash'); // Ganti jadi mata dicoret
-            } else {
-                passInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye'); // Ganti jadi mata normal
-            }
-        }
     </script>
 </body>
 </html>
