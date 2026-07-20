@@ -753,15 +753,14 @@
             }
         }
 
-        // Navigasi Antar Menu (VERSI FIX)
         function navigate(view) {
-            // Sembunyikan semua section
+            // 1. Sembunyikan semua section
             document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
             
-            // Hapus kelas 'active' dari semua menu
+            // 2. Hapus kelas 'active' dari semua menu
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-            // Tampilkan section yang dipilih
+            // 3. Tampilkan section yang dipilih
             if(view === 'dashboard') {
                 document.getElementById('view-dashboard').style.display = 'block';
                 loadDashboard();
@@ -773,10 +772,15 @@
                 loadTableData();
             }
 
-            // Cari tombol menu yang diklik dan tambahkan kelas 'active' dengan aman
-            const clickedMenu = event ? event.currentTarget : document.querySelector(`[onclick="navigate('${view}')"]`);
-            if (clickedMenu) {
-                clickedMenu.classList.add('active');
+            // 4. Perbaikan ERROR: Cek apakah 'event' ada sebelum mengakses currentTarget
+            // Jika dipanggil dari klik (ada event), cari elemennya. 
+            // Jika dipanggil otomatis (setupApp), abaikan penambahan kelas active.
+            if (typeof event !== 'undefined' && event && event.currentTarget) {
+                event.currentTarget.classList.add('active');
+            } else {
+                // Opsional: Jika tidak ada event, cari manual berdasarkan view agar menu Dashboard tetap aktif
+                const autoMenu = document.querySelector(`[onclick="navigate('${view}')"]`);
+                if (autoMenu) autoMenu.classList.add('active');
             }
         }
 
