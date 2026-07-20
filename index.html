@@ -112,6 +112,64 @@
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
         .full-width { grid-column: 1 / -1; }
+    /* =========================================
+           MODERN DASHBOARD LAYOUT
+           ========================================= */
+        .dashboard-container { display: flex; flex-direction: column; gap: 20px; }
+        
+        /* 1. Hero Banner */
+        .dash-banner {
+            background: linear-gradient(135deg, #1e5a2f, #2b7042);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(30,90,47,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .dash-banner::after { /* Efek pattern/hiasan transparan di kanan */
+            content: '\f51f'; /* Ikon quran/buku dari FontAwesome */
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            right: -20px;
+            top: -40px;
+            font-size: 200px;
+            opacity: 0.1;
+        }
+        .dash-banner h2 { font-size: 24px; margin-bottom: 5px; position: relative; z-index: 2; }
+        .dash-banner p { font-size: 14px; opacity: 0.9; position: relative; z-index: 2; }
+        .dash-actions { display: flex; gap: 10px; position: relative; z-index: 2; }
+        .btn-white { background: white; color: #1e5a2f; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        /* 2. Top Cards (4 Kolom) */
+        .dash-cards-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .dash-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: center; }
+        .dash-card.dark { background: #1e5a2f; color: white; }
+        .dash-card .title { font-size: 13px; color: #777; margin-bottom: 10px; font-weight: bold; }
+        .dash-card.dark .title { color: #d4e5d9; }
+        .dash-card .value { font-size: 28px; font-weight: bold; color: #333; }
+        .dash-card.dark .value { color: white; }
+        .dash-card .desc { font-size: 11px; margin-top: 10px; color: #888; display: flex; align-items: center; gap: 5px; }
+        .dash-card .badge-green { background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
+
+        /* 3. Middle & Bottom Layouts (Grid) */
+        .dash-grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .dash-grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .dash-panel { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .dash-panel h3 { font-size: 16px; margin-bottom: 20px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        /* List Item Styling (Untuk daftar pelanggaran/izin di bawah) */
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eee; }
+        .list-item:last-child { border-bottom: none; }
+        .list-info h4 { font-size: 14px; color: #333; margin-bottom: 3px; }
+        .list-info p { font-size: 12px; color: #777; }
+        .status-badge { padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+        .status-danger { background: #ffebee; color: #c62828; }
+        .status-warning { background: #fff8e1; color: #f57f17; }
     </style>
 </head>
 <body>
@@ -193,9 +251,67 @@
             </div>
             
             <div class="content-area" id="content-area">
+                <!-- Dashboard View (Layout Baru) -->
                 <div id="view-dashboard" class="view-section" style="display: block;">
-                    <h2>Dashboard Utama</h2>
-                    <div class="grid-cards" id="dash-cards"></div>
+                    <div class="dashboard-container">
+                        
+                        <!-- 1. Hero Banner -->
+                        <div class="dash-banner">
+                            <div>
+                                <h2>Ahlan wa Sahlan, <span id="dash-nama">Admin</span>!</h2>
+                                <p>Berikut adalah ringkasan data pondok pesantren hari ini.</p>
+                            </div>
+                            <div class="dash-actions">
+                                <button class="btn-white" onclick="navigate('pelanggaran')"><i class="fas fa-plus"></i> Input Pelanggaran</button>
+                            </div>
+                        </div>
+
+                        <!-- 2. Cards Row -->
+                        <div class="dash-cards-row" id="dash-cards-container">
+                            <!-- Akan diisi otomatis oleh JavaScript -->
+                        </div>
+
+                        <!-- 3. Middle Section (Chart 70% & Info 30%) -->
+                        <div class="dash-grid-2">
+                            <div class="dash-panel">
+                                <h3>Grafik Pelanggaran Bulanan</h3>
+                                <canvas id="chartPelanggaranBaru" height="100"></canvas>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Statistik Cepat Bulan Ini</h3>
+                                <!-- Progress Bar Tiruan ala gambar referensi -->
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Aman (0-19 Poin)</span> <strong>85%</strong></div>
+                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#4caf50; width:85%; height:100%; border-radius:5px;"></div></div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Perhatian (20-49 Poin)</span> <strong>10%</strong></div>
+                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#ffb300; width:10%; height:100%; border-radius:5px;"></div></div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Pembinaan (>50 Poin)</span> <strong>5%</strong></div>
+                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#e53935; width:5%; height:100%; border-radius:5px;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Bottom Section (2 List Berdampingan) -->
+                        <div class="dash-grid-half">
+                            <div class="dash-panel">
+                                <h3>5 Pelanggaran Terbaru</h3>
+                                <div id="list-pelanggaran-terbaru">
+                                    <p style="font-size:13px; color:#888;">Memuat data...</p>
+                                </div>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Santri Sedang Izin/Sakit</h3>
+                                <div id="list-izin-terbaru">
+                                     <p style="font-size:13px; color:#888;">Memuat data...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
                 <div id="view-generic" class="view-section">
@@ -361,15 +477,58 @@
 
         function loadDashboard() {
             showLoad();
+            
+            // Set nama di banner
+            if(currentUser) document.getElementById('dash-nama').innerText = currentUser.nama;
+
             apiCall({ action: 'getDashboardStats' }).then(res => {
                 hideLoad();
                 if(res.success) {
                     const d = res.data;
-                    document.getElementById('dash-cards').innerHTML = `
-                        <div class="card"><h4>Santri Aktif</h4><h2>${d.totAktif}</h2></div>
-                        <div class="card" style="border-left-color:red;"><h4>Pelanggaran (Bulan Ini)</h4><h2>${d.totPelanggaran}</h2></div>
-                        <div class="card" style="border-left-color:orange;"><h4>Santri Izin</h4><h2>${d.totIzin}</h2></div>
+                    
+                    // Render 4 Kartu Atas
+                    document.getElementById('dash-cards-container').innerHTML = `
+                        <div class="dash-card dark">
+                            <div class="title">Total Santri Aktif</div>
+                            <div class="value">${d.totAktif} Santri</div>
+                            <div class="desc">Berdasarkan data master</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="title">Pelanggaran Bulan Ini</div>
+                            <div class="value">${d.totPelanggaran}</div>
+                            <div class="desc"><span class="badge-green">+2%</span> dari bulan lalu</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="title">Santri Sedang Izin</div>
+                            <div class="value">${d.totIzin}</div>
+                            <div class="desc">Santri di luar pondok</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="title">Santri Sedang Sakit</div>
+                            <div class="value">${d.totSakit}</div>
+                            <div class="desc">Dirawat di poskestren</div>
+                        </div>
                     `;
+
+                    // Render Chart Baru (Bar Chart)
+                    if(window.chartDash) window.chartDash.destroy();
+                    const ctx = document.getElementById('chartPelanggaranBaru').getContext('2d');
+                    window.chartDash = new Chart(ctx, {
+                        type: 'bar',
+                        data: { 
+                            labels: d.chartPelLabels, 
+                            datasets: [{ 
+                                label: 'Jumlah Pelanggaran', 
+                                data: d.chartPelData, 
+                                backgroundColor: '#1e5a2f', // Hijau tua sesuai tema
+                                borderRadius: 5 // Sudut bar chart melengkung
+                            }] 
+                        },
+                        options: { responsive: true, plugins: { legend: { display: false } } }
+                    });
+
+                    // (Opsional) Di sini nanti bos bisa menambahkan logika untuk mengisi 
+                    // list 'Pelanggaran Terbaru' dan 'Izin' jika data spesifiknya sudah di-return dari backend.
                 }
             }).catch(err => hideLoad());
         }
