@@ -90,11 +90,15 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby007mXt-2sptjAsCgtEsMGlZMMytRVAWzOM87eopYdiyp0Qx5obG0D9IZ5eIUzQMQg/exec";
 
-        window.onload = () => {
+       window.onload = () => {
             const savedUser = localStorage.getItem('sim_user');
             if(savedUser) { 
-                window.currentUser = JSON.parse(savedUser);
+                currentUser = JSON.parse(savedUser);
                 setupApp(); 
+            } else {
+                // Jika belum login, pastikan screen login yang muncul
+                document.getElementById('auth-screen').style.display = 'flex';
+                document.getElementById('app-screen').style.display = 'none';
             }
         };
 
