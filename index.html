@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Administrasi Santri</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1B5E20; /* Hijau Tua */
+            --primary-light: #4CAF50; /* Hijau Muda */
+            --accent: #FFD700; /* Emas */
+            --bg: #f4f6f8;
+            --text-dark: #333;
+            --text-light: #fff;
+            --border: #e0e0e0;
+            --danger: #e53935;
+            --warning: #ff9800;
+            --info: #2196f3;
+            --sidebar-width: 260px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text-dark); display: flex; height: 100vh; overflow: hidden; }
+
+        /* Helpers & Utilities */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { display: flex; flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .mt-1 { margin-top: 0.5rem; } .mb-2 { margin-bottom: 1rem; }
+        .w-full { width: 100%; }
+
+        /* Login Screen */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .login-box { background: #fff; padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        .login-box h2 { color: var(--primary); margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1rem; text-align: left; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px; outline: none; }
+        .form-group input:focus, .form-group select:focus { border-color: var(--primary-light); }
+        
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: 0.3s; width: 100%; display: inline-block; text-align: center;}
+        .btn-primary { background: var(--primary); color: var(--text-light); }
+        .btn-primary:hover { background: var(--primary-light); }
+        .btn-accent { background: var(--accent); color: var(--text-dark); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-small { padding: 0.4rem 0.8rem; font-size: 0.85rem; width: auto; }
+
+        /* Layout */
+        #app-layout { display: flex; width: 100%; height: 100%; }
+        
+        /* Sidebar */
+        .sidebar { width: var(--sidebar-width); background: var(--primary); color: white; display: flex; flex-direction: column; transition: 0.3s; z-index: 100; }
+        .sidebar-header { padding: 1.5rem; background: rgba(0,0,0,0.1); border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; color: var(--accent); }
+        .sidebar-menu { flex: 1; overflow-y: auto; padding: 1rem 0; list-style: none; }
+        .sidebar-menu li a { display: block; padding: 0.8rem 1.5rem; color: #e0e0e0; text-decoration: none; transition: 0.2s; border-left: 4px solid transparent; cursor: pointer; }
+        .sidebar-menu li a:hover, .sidebar-menu li a.active { background: rgba(255,255,255,0.1); color: white; border-left-color: var(--accent); }
+        
+        /* Main Content */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+        .header { background: white; padding: 1rem 2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .user-role { font-size: 0.8rem; background: var(--primary-light); color: white; padding: 0.2rem 0.6rem; border-radius: 12px; }
+        .content-area { flex: 1; padding: 2rem; overflow-y: auto; }
+
+        /* Cards & Stats */
+        .dashboard-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-bottom: 3px solid var(--primary); }
+        .stat-card h3 { font-size: 0.9rem; color: #666; margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
+        
+        /* Tables */
+        .card { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 1.5rem; }
+        .toolbar { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.8rem; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+        th { background: #f8f9fa; font-weight: 600; color: var(--primary); }
+        tr:hover { background: #f1f1f1; }
+        
+        /* Modals & Dialogs */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal { background: white; width: 90%; max-width: 600px; border-radius: 8px; max-height: 90vh; display: flex; flex-direction: column; }
+        .modal-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--primary); color: white; border-radius: 8px 8px 0 0;}
+        .modal-body { padding: 1.5rem; overflow-y: auto; }
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
+        .close-btn { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
+        /* Toast & Loading */
+        #toast { position: fixed; bottom: 20px; right: 20px; background: var(--primary); color: white; padding: 1rem 2rem; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transform: translateY(100px); opacity: 0; transition: 0.3s; z-index: 2000; }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.error { background: var(--danger); }
+        
+        #global-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.8); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .spinner { border: 4px solid rgba(0,0,0,0.1); border-left-color: var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Badges */
+        .badge { padding: 0.2rem 0.6rem; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .badge-aman { background: var(--primary-light); color: white; }
+        .badge-perhatian { background: var(--info); color: white; }
+        .badge-pembinaan { background: var(--warning); color: white; }
+        .badge-peringatan { background: var(--danger); color: white; }
+
+        /* Responsive */
+        .menu-toggle { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--primary); }
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; left: -260px; height: 100%; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+            .sidebar.open { left: 0; }
+            .menu-toggle { display: block; }
+            .dashboard-stats { grid-template-columns: 1fr; }
+            .header { padding: 1rem; }
+            .content-area { padding: 1rem; }
+        }
+
+        /* Print */
+        @media print {
+            .sidebar, .header, .toolbar, button, .modal-overlay { display: none !important; }
+            .main-content { overflow: visible; background: white; }
+            .content-area { padding: 0; }
+            .card { box-shadow: none; border: none; margin: 0; padding: 0; }
+            body { background: white; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Global Loader -->
+    <div id="global-loader" class="hidden">
+        <div class="spinner"></div>
+        <p class="mt-1" style="color:var(--primary); font-weight:bold;">Memproses Data...</p>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">Notifikasi</div>
+
+    <!-- Login Screen -->
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>Sistem Administrasi<br>Pembinaan Santri</h2>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <input type="text" id="username" placeholder="Username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary">Masuk Aplikasi</button>
+            </form>
+            <p style="margin-top: 15px; font-size: 0.8rem; color: #666;">Versi 1.0.0 | Pondok Pesantren</p>
+        </div>
+    </div>
+
+    <!-- App Layout -->
+    <div id="app-layout" class="hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                Admin Santri
+            </div>
+            <ul class="sidebar-menu" id="nav-menu">
+                <li><a onclick="navigateTo('dashboard')" id="nav-dashboard">Dashboard</a></li>
+                <li><a onclick="navigateTo('santri')" id="nav-santri">Data Santri</a></li>
+                <li><a onclick="navigateTo('pelanggaran')" id="nav-pelanggaran">Pelanggaran Santri</a></li>
+                <li><a onclick="navigateTo('prestasi')" id="nav-prestasi">Prestasi Santri</a></li>
+                <li><a onclick="navigateTo('perizinan')" id="nav-perizinan">Perizinan Santri</a></li>
+                <li><a onclick="navigateTo('kesehatan')" id="nav-kesehatan">Kesehatan Santri</a></li>
+                <li class="admin-only"><a onclick="navigateTo('laporan')" id="nav-laporan">Laporan & Cetak</a></li>
+                <li class="super-only"><a onclick="navigateTo('pengguna')" id="nav-pengguna">Manajemen Pengguna</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="flex items-center gap-10">
+                    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                    <h2 id="page-title" style="color: var(--primary);">Dashboard</h2>
+                </div>
+                <div class="user-info">
+                    <div class="flex-col" style="text-align: right;">
+                        <span id="user-name-display" style="font-weight: bold;">User</span>
+                        <span id="user-role-display" class="user-role">Role</span>
+                    </div>
+                    <button onclick="handleLogout()" class="btn btn-danger btn-small">Logout</button>
+                </div>
+            </header>
+
+            <div class="content-area" id="content-area">
+                <!-- Views will be injected here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Reusable Modal Templates -->
+    <div id="modal-container"></div>
+
+    <script>
+        // MOCK GAS ENVIRONMENT FOR LOCAL/PREVIEW TESTING
+        if (typeof google === 'undefined') {
+            console.warn("Menjalankan di luar Google Apps Script. Menggunakan mock backend.");
+            window.google = {
+                script: {
+                    run: {
+                        withSuccessHandler: function(onSuccess) {
+                            return {
+                                withFailureHandler: function(onFailure) {
+                                    return new Proxy({}, {
+                                        get: function(target, funcName) {
+                                            return function(...args) {
+                                                console.log(`[Mock] Endpoint backend dipanggil: ${funcName}`);
+                                                setTimeout(() => {
+                                                    let res = { success: true, message: "Berhasil (Mock)", data: [] };
+                                                    if (funcName === 'loginUser') res.data = { token: 'mock-123', user: { nama: 'Admin Demo', role: 'Super Admin' } };
+                                                    else if (funcName === 'validateSession') res.data = { user: { nama: 'Admin Demo', role: 'Super Admin' } };
+                                                    else if (funcName === 'getDashboardData') res.data = { totalSantri: 120, totalPelanggaranBulan: 5, totalPrestasiBulan: 12, totalIzin: 2, chartLabels: ['Jan','Feb','Mar','Apr','Mei','Jun'], chartData: [2,5,3,8,4,9] };
+                                                    else if (funcName === 'getMasterDataList') res.data = { kelas: ['7A', '7B'], asrama: ['Asrama Putra A'], pelanggaran: ['Terlambat shalat berjamaah'] };
+                                                    else if (funcName === 'logoutUser') res.message = "Logout berhasil";
+                                                    
+                                                    onSuccess(res);
+                                                }, 500);
+                                            };
+                                        }
+                                    });
+                                }
+                            };
+                        }
+                    }
+                };
+            }
+        }
+
+        /**
+         * STATE & UTILITIES
+         */
+        const state = {
+            token: localStorage.getItem('appToken'),
+            user: JSON.parse(localStorage.getItem('appUser') || '{}'),
+            currentView: 'dashboard',
+            masterData: {}, // Cache for select options
+            currentDataList: [] // Cache for table data
+        };
+
+        const showLoading = () => document.getElementById('global-loader').classList.remove('hidden');
+        const hideLoading = () => document.getElementById('global-loader').classList.add('hidden');
+        
+        const showToast = (message, isError = false) => {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = isError ? 'error show' : 'show';
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        };
+
+        const escapeHtml = (unsafe) => {
+            if (!unsafe) return '';
+            return String(unsafe).replace(/[&<"'>]/g, (m) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+            })[m]);
+        };
+
+        const callServer = (funcName, ...args) => {
+            return new Promise((resolve, reject) => {
+                showLoading();
+                google.script.run
+                    .withSuccessHandler(res => {
+                        hideLoading();
+                        if(res && res.success === false && res.errorCode === 'SESSION_INVALID') {
+                            handleLogout(true);
+                            reject(new Error("Session expired"));
+                            return;
+                        }
+                        resolve(res);
+                    })
+                    .withFailureHandler(err => {
+                        hideLoading();
+                        showToast("Terjadi kesalahan server.", true);
+                        reject(err);
+                    })
+                    [funcName](...args);
+            });
+        };
+
+        const confirmDialog = (message, onConfirm) => {
+            if(confirm(message)) onConfirm(); // Simplifikasi dialog konfirmasi
+        };
+
+        const toggleSidebar = () => document.getElementById('sidebar').classList.toggle('open');
+
+        /**
+         * INITIALIZATION & AUTH
+         */
+        window.onload = async () => {
+            if (state.token) {
+                try {
+                    const res = await callServer('validateSession', state.token);
+                    if (res.success) {
+                        state.user = res.data.user;
+                        initializeApp();
+                    } else {
+                        handleLogout(true);
+                    }
+                } catch(e) {}
+            }
+        };
+
+        const handleLogin = async (e) => {
+            e.preventDefault();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            
+            const res = await callServer('loginUser', u, p);
+            if (res.success) {
+                state.token = res.data.token;
+                state.user = res.data.user;
+                localStorage.setItem('appToken', state.token);
+                localStorage.setItem('appUser', JSON.stringify(state.user));
+                document.getElementById('login-form').reset();
+                showToast("Login berhasil");
+                initializeApp();
+            } else {
+                showToast(res.message, true);
+            }
+        };
+
+        const handleLogout = async (forced = false) => {
+            if (!forced && state.token) await callServer('logoutUser', state.token);
+            localStorage.removeItem('appToken');
+            localStorage.removeItem('appUser');
+            state.token = null;
+            state.user = {};
+            document.getElementById('app-layout').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+            if(!forced) showToast("Logout berhasil");
+        };
+
+        const initializeApp = async () => {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-layout').classList.remove('hidden');
+            document.getElementById('user-name-display').textContent = state.user.nama;
+            document.getElementById('user-role-display').textContent = state.user.role;
+            
+            // ACL UI
+            document.querySelectorAll('.super-only').forEach(el => {
+                el.style.display = (state.user.role === 'Super Admin') ? 'block' : 'none';
+            });
+
+            // Fetch Initial Master Data (Kelas, Asrama, dll)
+            const mdRes = await callServer('getMasterDataList', state.token);
+            if(mdRes.success) state.masterData = mdRes.data;
+
+            navigateTo('dashboard');
+        };
+
+        /**
+         * ROUTING & RENDER ENGINE
+         */
+        const navigateTo = (view) => {
+            state.currentView = view;
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            const activeNav = document.getElementById('nav-' + view);
+            if(activeNav) activeNav.classList.add('active');
+            
+            const content = document.getElementById('content-area');
+            const title = document.getElementById('page-title');
+            
+            if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+
+            switch(view) {
+                case 'dashboard': 
+                    title.textContent = 'Dashboard Statistik';
+                    renderDashboard(content); 
+                    break;
+                case 'santri': 
+                    title.textContent = 'Data Induk Santri';
+                    renderDataGrid(content, 'santri'); 
+                    break;
+                case 'pelanggaran': 
+                    title.textContent = 'Catatan Pelanggaran';
+                    renderDataGrid(content, 'pelanggaran'); 
+                    break;
+                case 'prestasi': 
+                    title.textContent = 'Catatan Prestasi';
+                    renderDataGrid(content, 'prestasi'); 
+                    break;
+                // Modul lain mengikuti pola yang sama...
+                default: 
+                    content.innerHTML = `<div class="card"><h2>Modul ${view} dalam pengembangan.</h2></div>`;
+            }
+        };
+
+        /**
+         * DASHBOARD MODULE
+         */
+        const renderDashboard = async (container) => {
+            container.innerHTML = `
+                <div class="dashboard-stats" id="dash-stats">
+                    <div class="stat-card"><h3>Total Santri Aktif</h3><div class="value" id="stat-santri">-</div></div>
+                    <div class="stat-card"><h3>Pelanggaran Bulan Ini</h3><div class="value" id="stat-pelanggaran">-</div></div>
+                    <div class="stat-card"><h3>Prestasi Bulan Ini</h3><div class="value" id="stat-prestasi">-</div></div>
+                    <div class="stat-card"><h3>Sedang Izin Keluar</h3><div class="value" id="stat-izin">-</div></div>
+                </div>
+                <div class="flex" style="gap:1.5rem; flex-wrap:wrap;">
+                    <div class="card" style="flex:1; min-width:300px;">
+                        <h3>Tren Pelanggaran (6 Bulan)</h3>
+                        <canvas id="chartPelanggaran" height="200"></canvas>
+                    </div>
+                </div>
+            `;
+            
+            const res = await callServer('getDashboardData', state.token);
+            if(res.success) {
+                document.getElementById('stat-santri').textContent = res.data.totalSantri;
+                document.getElementById('stat-pelanggaran').textContent = res.data.totalPelanggaranBulan;
+                document.getElementById('stat-prestasi').textContent = res.data.totalPrestasiBulan;
+                document.getElementById('stat-izin').textContent = res.data.totalIzin;
+
+                // Simple Chart JS init
+                if(window.Chart) {
+                    new Chart(document.getElementById('chartPelanggaran'), {
+                        type: 'line',
+                        data: {
+                            labels: res.data.chartLabels,
+                            datasets: [{ label: 'Jumlah Pelanggaran', data: res.data.chartData, borderColor: '#e53935', tension: 0.1 }]
+                        }
+                    });
+                }
+            }
+        };
+
+        /**
+         * GENERIC DATA GRID (CRUD LIST)
+         */
+        const renderDataGrid = async (container, moduleType) => {
+            const config = getModuleConfig(moduleType);
+            
+            let html = `
+                <div class="card">
+                    <div class="toolbar">
+                        <div>
+                            <button class="btn btn-primary btn-small" onclick="openFormModal('${moduleType}')">+ Tambah Data</button>
+                            <button class="btn btn-accent btn-small" onclick="refreshDataGrid('${moduleType}')">↻ Refresh</button>
+                        </div>
+                        <div>
+                            <input type="text" id="searchInput" placeholder="Cari data..." style="padding:0.4rem; border:1px solid #ccc; border-radius:4px;" onkeyup="filterTable()">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="dataTable">
+                            <thead><tr>${config.columns.map(c => `<th>${c.label}</th>`).join('')}<th>Aksi</th></tr></thead>
+                            <tbody id="dataTableBody"><tr><td colspan="${config.columns.length + 1}" style="text-align:center;">Memuat data...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+            await refreshDataGrid(moduleType);
+        };
+
+        const refreshDataGrid = async (moduleType) => {
+            const config = getModuleConfig(moduleType);
+            const res = await callServer(config.fetchFunc, state.token);
+            const tbody = document.getElementById('dataTableBody');
+            
+            if(res.success) {
+                state.currentDataList = res.data;
+                if(res.data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="${config.columns.length + 1}" style="text-align:center;">Belum ada data.</td></tr>`;
+                    return;
+                }
+                
+                let rows = '';
+                res.data.forEach((row, index) => {
+                    let tr = '<tr>';
+                    config.columns.forEach(col => {
+                        let val = escapeHtml(row[col.key] || '-');
+                        if(col.key === 'Poin' || col.key === 'PoinPrestasi') {
+                            let bClass = val > 50 ? 'badge-peringatan' : 'badge-aman';
+                            val = `<span class="badge ${bClass}">${val}</span>`;
+                        }
+                        tr += `<td>${val}</td>`;
+                    });
+                    tr += `<td>
+                        <button class="btn btn-accent btn-small" onclick="editRecord('${moduleType}', ${index})">✎</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteRecord('${moduleType}', '${row[config.idKey]}')">🗑</button>
+                    </td></tr>`;
+                    rows += tr;
+                });
+                tbody.innerHTML = rows;
+            }
+        };
+
+        const filterTable = () => {
+            const filter = document.getElementById('searchInput').value.toUpperCase();
+            const tr = document.getElementById('dataTable').getElementsByTagName('tr');
+            for (let i = 1; i < tr.length; i++) {
+                let txtValue = tr[i].textContent || tr[i].innerText;
+                tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        };
+
+        /**
+         * GENERIC MODAL FORM BUILDER
+         */
+        const openFormModal = (moduleType, dataIndex = null) => {
+            const config = getModuleConfig(moduleType);
+            const data = dataIndex !== null ? state.currentDataList[dataIndex] : {};
+            const isEdit = dataIndex !== null;
+
+            let formFields = config.formFields.map(f => {
+                let val = data[f.key] || '';
+                let inputHtml = '';
+                
+                if (f.type === 'select') {
+                    let options = f.options || state.masterData[f.masterKey] || [];
+                    inputHtml = `<select id="f_${f.key}" required="${f.required}">
+                        <option value="">-- Pilih --</option>
+                        ${options.map(o => `<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('')}
+                    </select>`;
+                } else if(f.type === 'textarea') {
+                    inputHtml = `<textarea id="f_${f.key}" rows="3" required="${f.required}">${val}</textarea>`;
+                } else {
+                    inputHtml = `<input type="${f.type}" id="f_${f.key}" value="${val}" required="${f.required}" ${f.readonly?'readonly':''}>`;
+                }
+
+                return `<div class="form-group"><label>${f.label}</label>${inputHtml}</div>`;
+            }).join('');
+
+            const modalHtml = `
+                <div class="modal-overlay" id="activeModal">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3>${isEdit ? 'Edit' : 'Tambah'} ${config.title}</h3>
+                            <button class="close-btn" onclick="document.getElementById('activeModal').remove()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="dynamicForm">
+                                <input type="hidden" id="f_${config.idKey}" value="${data[config.idKey] || ''}">
+                                ${formFields}
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn" style="background:#ddd;" onclick="document.getElementById('activeModal').remove()">Batal</button>
+                            <button class="btn btn-primary" style="width:auto;" onclick="submitForm('${moduleType}')">Simpan Data</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-container').innerHTML = modalHtml;
+        };
+
+        const submitForm = async (moduleType) => {
+            const form = document.getElementById('dynamicForm');
+            if(!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const config = getModuleConfig(moduleType);
+            const payload = {};
+            
+            // Extract values
+            payload[config.idKey] = document.getElementById(`f_${config.idKey}`).value;
+            config.formFields.forEach(f => {
+                payload[f.key] = document.getElementById(`f_${f.key}`).value;
+            });
+
+            const res = await callServer(config.saveFunc, state.token, payload);
+            if(res.success) {
+                showToast(res.message);
+                document.getElementById('activeModal').remove();
+                refreshDataGrid(moduleType);
+            } else {
+                showToast(res.message, true);
+            }
+        };
+
+        const editRecord = (moduleType, index) => openFormModal(moduleType, index);
+        
+        const deleteRecord = (moduleType, id) => {
+            confirmDialog("Yakin ingin menghapus data ini?", async () => {
+                const config = getModuleConfig(moduleType);
+                const res = await callServer(config.deleteFunc, state.token, id);
+                if(res.success) {
+                    showToast(res.message);
+                    refreshDataGrid(moduleType);
+                } else {
+                    showToast(res.message, true);
+                }
+            });
+        };
+
+        /**
+         * MODULE CONFIGURATIONS (Defines how tables & forms render)
+         */
+        const getModuleConfig = (type) => {
+            const configs = {
+                santri: {
+                    title: 'Santri', fetchFunc: 'getSantriList', saveFunc: 'saveSantri', deleteFunc: 'deleteSantri', idKey: 'IDSantri',
+                    columns: [
+                        {key: 'NIS', label: 'NIS'}, {key: 'NamaLengkap', label: 'Nama Lengkap'}, 
+                        {key: 'Kelas', label: 'Kelas'}, {key: 'Asrama', label: 'Asrama'}, {key: 'StatusSantri', label: 'Status'}
+                    ],
+                    formFields: [
+                        {key: 'NIS', label: 'NIS', type: 'text', required: true},
+                        {key: 'NamaLengkap', label: 'Nama Lengkap', type: 'text', required: true},
+                        {key: 'Kelas', label: 'Kelas', type: 'select', masterKey: 'kelas', required: true},
+                        {key: 'Asrama', label: 'Asrama', type: 'select', masterKey: 'asrama', required: true},
+                        {key: 'StatusSantri', label: 'Status', type: 'select', options: ['Aktif', 'Nonaktif', 'Lulus', 'Pindah'], required: true},
+                        {key: 'NamaAyah', label: 'Nama Ayah', type: 'text', required: false},
+                        {key: 'NoHPWali', label: 'No. HP Wali', type: 'text', required: true}
+                    ]
+                },
+                pelanggaran: {
+                    title: 'Pelanggaran', fetchFunc: 'getPelanggaranList', saveFunc: 'savePelanggaran', deleteFunc: 'deletePelanggaran', idKey: 'IDPelanggaran',
+                    columns: [
+                        {key: 'Tanggal', label: 'Tanggal'}, {key: 'NamaSantri', label: 'Nama Santri'}, 
+                        {key: 'JenisPelanggaran', label: 'Pelanggaran'}, {key: 'Poin', label: 'Poin'}
+                    ],
+                    formFields: [
+                        {key: 'Tanggal', label: 'Tanggal', type: 'date', required: true},
+                        {key: 'NIS', label: 'NIS Santri (Ketik persis)', type: 'text', required: true},
+                        {key: 'JenisPelanggaran', label: 'Jenis Pelanggaran', type: 'select', masterKey: 'pelanggaran', required: true},
+                        {key: 'Kronologi', label: 'Kronologi Singkat', type: 'textarea', required: true}
+                    ]
+                },
+                prestasi: {
+                    title: 'Prestasi', fetchFunc: 'getPrestasiList', saveFunc: 'savePrestasi', deleteFunc: 'deletePrestasi', idKey: 'IDPrestasi',
+                    columns: [
+                        {key: 'Tanggal', label: 'Tanggal'}, {key: 'NamaSantri', label: 'Nama Santri'}, 
+                        {key: 'NamaPrestasi', label: 'Prestasi'}, {key: 'Tingkat', label: 'Tingkat'}
+                    ],
+                    formFields: [
+                        {key: 'Tanggal', label: 'Tanggal', type: 'date', required: true},
+                        {key: 'NIS', label: 'NIS Santri (Ketik persis)', type: 'text', required: true},
+                        {key: 'NamaPrestasi', label: 'Nama Prestasi/Lomba', type: 'text', required: true},
+                        {key: 'Tingkat', label: 'Tingkat', type: 'select', options: ['Internal', 'Kabupaten', 'Provinsi', 'Nasional', 'Internasional'], required: true},
+                        {key: 'PoinPrestasi', label: 'Poin (Angka)', type: 'number', required: true}
+                    ]
+                }
+            };
+            return configs[type];
+        };
+    </script>
+</body>
+</html>
