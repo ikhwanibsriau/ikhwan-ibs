@@ -696,19 +696,16 @@
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'flex';
             
-            // Update UI Profile
             if(currentUser && currentUser.nama) {
                 document.getElementById('user-initial').innerText = currentUser.nama.charAt(0).toUpperCase();
                 document.getElementById('user-display-name').innerText = currentUser.nama.split(' ')[0].toUpperCase();
                 document.getElementById('user-display-role').innerText = currentUser.role;
             }
             
-            // Tampilkan menu khusus admin
             if(currentUser && currentUser.role === 'Super Admin') {
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
             }
 
-            // Panggil navigate dengan aman
             navigate('dashboard');
         }
             
@@ -754,13 +751,9 @@
         }
 
         function navigate(view) {
-            // 1. Sembunyikan semua section
             document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
-            
-            // 2. Hapus kelas 'active' dari semua menu
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-            // 3. Tampilkan section yang dipilih
             if(view === 'dashboard') {
                 document.getElementById('view-dashboard').style.display = 'block';
                 loadDashboard();
@@ -772,15 +765,9 @@
                 loadTableData();
             }
 
-            // 4. Perbaikan ERROR: Cek apakah 'event' ada sebelum mengakses currentTarget
-            // Jika dipanggil dari klik (ada event), cari elemennya. 
-            // Jika dipanggil otomatis (setupApp), abaikan penambahan kelas active.
-            if (typeof event !== 'undefined' && event && event.currentTarget) {
-                event.currentTarget.classList.add('active');
-            } else {
-                // Opsional: Jika tidak ada event, cari manual berdasarkan view agar menu Dashboard tetap aktif
-                const autoMenu = document.querySelector(`[onclick="navigate('${view}')"]`);
-                if (autoMenu) autoMenu.classList.add('active');
+            const activeMenu = document.querySelector(`[onclick="navigate('${view}')"]`);
+            if (activeMenu) {
+                activeMenu.classList.add('active');
             }
         }
 
