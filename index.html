@@ -65,18 +65,92 @@
         .btn-sso { width: 100%; padding: 10px; background: #fff; color: #333; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
         .btn-sso:hover { background: #f9f9f9; }
         .login-footer-new { text-align: center; font-size: 10px; color: #777; margin-top: 25px; line-height: 1.6; }
-        /* App Layout */
-        #app-screen { display: none; height: 100vh; }
-        .sidebar { width: var(--sidebar-width); background: var(--primary); color: white; display: flex; flex-direction: column; transition: 0.3s; }
-        .sidebar { width: var(--sidebar-width); background: var(--primary); color: white; display: flex; flex-direction: column; transition: 0.3s; }
-        .sidebar.collapsed { margin-left: -250px; }
-        .nav-menu { flex: 1; overflow-y: auto; padding: 10px 0; }
-        .nav-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; transition: 0.3s; }
-        .nav-item i { margin-right: 15px; width: 20px; text-align: center; }
-        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); border-left: 4px solid #ffb300; }
-        .admin-only { display: none; }
+        /* App Layout & Mini Sidebar */
+        #app-screen { display: none; height: 100vh; overflow: hidden; }
         
-        /* Main Content */
+        .sidebar { 
+            width: var(--sidebar-width); 
+            background: var(--primary-dark); 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transisi mulus */
+            z-index: 10;
+        }
+        
+        /* Saat diklik, sidebar tidak hilang, tapi mengecil jadi 85px */
+        .sidebar.collapsed { width: 85px; }
+
+        .sidebar-header { 
+            height: 80px; 
+            display: flex; 
+            align-items: center; 
+            padding-left: 25px; 
+            white-space: nowrap; 
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        /* Ikon Logo saat sidebar mengecil */
+        .sidebar-logo-icon { font-size: 24px; color: var(--primary-light); min-width: 40px; }
+        .sidebar-header h3 { font-size: 15px; line-height: 1.3; transition: opacity 0.3s; }
+        .sidebar.collapsed .sidebar-header h3 { opacity: 0; pointer-events: none; }
+
+        .nav-menu { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px 0 20px 15px; }
+        
+        /* Gaya Item Navigasi */
+        .nav-item { 
+            padding: 15px 20px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            transition: 0.3s; 
+            position: relative; 
+            border-radius: 30px 0 0 30px; /* Melengkung di kiri, datar di kanan */
+            margin-bottom: 8px; 
+            color: #a7cfa5; /* Hijau redup */
+            white-space: nowrap;
+        }
+        
+        .nav-item i { font-size: 20px; min-width: 35px; text-align: left; z-index: 2; transition: 0.3s; }
+        .nav-item span { font-size: 14px; font-weight: 500; transition: opacity 0.3s; z-index: 2; }
+        .sidebar.collapsed .nav-item span { opacity: 0; pointer-events: none; }
+
+        /* Efek Sorot (Hover) */
+        .nav-item:hover { color: white; }
+
+        /* =========================================
+           EFEK CUTOUT / INSET ACTIVE (Sesuai Gambar)
+           ========================================= */
+        .nav-item.active { 
+            background: var(--bg); /* Menyatu dengan warna latar aplikasi */
+            color: var(--primary); /* Teks jadi hijau terang */
+            font-weight: bold;
+        }
+        
+        /* Membuat lengkungan "bolong" di atas dan bawah menu aktif */
+        .nav-item.active::before,
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            width: 25px;
+            height: 25px;
+            background: transparent;
+            z-index: 1;
+        }
+        
+        .nav-item.active::before {
+            top: -25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 10px 10px 0 10px var(--bg); /* Menambal warna background utama */
+        }
+        
+        .nav-item.active::after {
+            bottom: -25px;
+            border-top-right-radius: 25px;
+            box-shadow: 10px -10px 0 10px var(--bg);
+        }
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
         .topbar { height: 60px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
         .content-area { flex: 1; padding: 20px; overflow-y: auto; }
@@ -231,16 +305,29 @@
 
     <!-- Main App -->
     <div id="app-screen">
+        <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <h3 style="font-size: 16px; line-height: 1.4; margin-left: 15px;">SISTEM MANAJEMEN<br>SANTRI (SMS)</h3>
+                <!-- Ikon Masjid ini akan bertindak sebagai Logo saat menu dikecilkan -->
+                <i class="fas fa-mosque sidebar-logo-icon"></i>
+                <h3>SISTEM MANAJEMEN<br>SANTRI (SMS)</h3>
             </div>
             <div class="nav-menu" id="nav-menu">
-                <div class="nav-item active" onclick="navigate('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</div>
-                <div class="nav-item" onclick="navigate('santri')"><i class="fas fa-users"></i> Data Santri</div>
-                <div class="nav-item" onclick="navigate('pelanggaran')"><i class="fas fa-exclamation-triangle"></i> Pelanggaran</div>
-                <div class="nav-item" onclick="navigate('perizinan')"><i class="fas fa-door-open"></i> Perizinan</div>
-                <div class="nav-item admin-only" onclick="navigate('master')"><i class="fas fa-database"></i> Master Data</div>
+                <div class="nav-item active" onclick="navigate('dashboard')">
+                    <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                </div>
+                <div class="nav-item" onclick="navigate('santri')">
+                    <i class="fas fa-users"></i> <span>Data Santri</span>
+                </div>
+                <div class="nav-item" onclick="navigate('pelanggaran')">
+                    <i class="fas fa-exclamation-triangle"></i> <span>Pelanggaran</span>
+                </div>
+                <div class="nav-item" onclick="navigate('perizinan')">
+                    <i class="fas fa-door-open"></i> <span>Perizinan</span>
+                </div>
+                <div class="nav-item admin-only" onclick="navigate('master')">
+                    <i class="fas fa-database"></i> <span>Master Data</span>
+                </div>
             </div>
         </div>
 
