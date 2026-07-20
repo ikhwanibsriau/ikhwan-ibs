@@ -585,10 +585,13 @@
         function setupApp() {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'flex';
-            document.getElementById('user-display').innerText = `${currentUser.nama}`;
-            // Set huruf awal nama user ke dalam avatar profile
-            document.getElementById('user-initial').innerText = currentUser.nama.charAt(0).toUpperCase();
-            if(currentUser.role === 'Super Admin') {
+            
+            // Set huruf awal nama user ke dalam avatar profile (MENGGANTIKAN KODE YANG LAMA)
+            if(currentUser && currentUser.nama) {
+                document.getElementById('user-initial').innerText = currentUser.nama.charAt(0).toUpperCase();
+            }
+            
+            if(currentUser && currentUser.role === 'Super Admin') {
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
             }
             
@@ -596,6 +599,9 @@
             apiCall({ action: 'getTableData', sheetName: 'Santri' }).then(res => {
                 if(res.success) listNamaSantri = res.data.map(s => s.nama);
             });
+
+            navigate('dashboard');
+        }
 // Fungsi Toggle Dark Mode
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
