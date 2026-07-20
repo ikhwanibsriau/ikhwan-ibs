@@ -152,35 +152,39 @@
             box-shadow: 10px -10px 0 10px var(--bg);
         }
         /* =========================================
-           MAIN CONTENT & TOPBAR (PERBAIKAN LAYOUT)
+           MAIN LAYOUT & TOPBAR (KUNCI POSISI)
            ========================================= */
         .main-content { 
             flex: 1; 
             display: flex; 
             flex-direction: column; 
+            height: 100vh; /* Kunci tinggi layar penuh */
             overflow: hidden; 
         }
         
         .topbar { 
             height: 70px; 
-            min-height: 70px; /* Mengunci tinggi topbar agar tabel tidak bocor ke atas */
+            min-height: 70px; 
+            width: 100%; 
             background: #ffffff; 
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
             display: flex; 
-            justify-content: space-between; /* Mendorong menu ke Kiri dan profil ke Kanan */
+            justify-content: space-between; /* Paksa Kiri dan Kanan pisah */
             align-items: center; 
             padding: 0 25px; 
-            position: relative;
-            z-index: 99; /* Memastikan header selalu berada di atas tabel */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            z-index: 10; 
         }
+        
+        .topbar-left { display: flex; align-items: center; }
+        .topbar-right { display: flex; align-items: center; gap: 20px; }
         
         .content-area { 
             flex: 1; 
             padding: 20px; 
             overflow-y: auto; 
-            background-color: var(--bg); /* Menggunakan warna hijau muda dari Tailwind */
-            position: relative;
-            z-index: 10;
+            background-color: var(--bg); 
+            position: relative; 
+            z-index: 1; 
         }
         .btn { padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; }
         .btn-danger { background: #e53935; }
@@ -425,16 +429,24 @@
             </div>
         </div>
 
+        <!-- Main Content -->
         <div class="main-content">
+            
+            <!-- Topbar -->
             <div class="topbar">
-                <div><i class="fas fa-bars" style="cursor:pointer; font-size: 18px;" onclick="toggleSidebar()"></i></div>
+                <!-- BAGIAN KIRI: Tombol Menu Garis Tiga -->
+                <div class="topbar-left">
+                    <i class="fas fa-bars" style="cursor:pointer; font-size: 20px; color: #4b5563;" onclick="toggleSidebar()"></i>
+                </div>
+                
+                <!-- BAGIAN KANAN: Ikon & Profil -->
                 <div class="topbar-right">
-                    <!-- Tombol Mode Gelap/Terang (Tanpa kotak) -->
+                    <!-- Tombol Mode Gelap/Terang -->
                     <button class="icon-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Mode Gelap/Terang">
                         <i class="far fa-moon"></i>
                     </button>
                     
-                    <!-- Tombol Notifikasi (Tanpa kotak) -->
+                    <!-- Tombol Notifikasi -->
                     <button class="icon-btn" onclick="alert('Belum ada notifikasi baru.')" title="Notifikasi">
                         <i class="far fa-bell"></i>
                         <span class="notify-badge"></span>
@@ -447,7 +459,6 @@
                                 <span class="profile-name" id="user-display-name">Admin</span>
                                 <span class="profile-role" id="user-display-role">Super Admin</span>
                             </div>
-                            <!-- Avatar Bulat dengan Titik Online -->
                             <div class="user-avatar">
                                 <span id="user-initial">A</span>
                                 <div class="online-dot"></div>
@@ -468,8 +479,10 @@
                         </div>
                     </div>
                 </div>
-            
-            <div class="content-area" id="content-area">
+            </div>
+
+            <!-- Area Konten Utama -->
+            <div class="content-area">
                 <!-- Dashboard View (Layout Baru) -->
                 <div id="view-dashboard" class="view-section" style="display: block;">
                     <div class="dashboard-container">
