@@ -22,49 +22,49 @@
         body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; }
         
         /* Auth Screen (Berdasarkan Referensi Gambar) */
-        /* Auth Screen (Gaya Baru Modern) */
+        /* =========================================
+           AUTH SCREEN (LOGIN)
+           ========================================= */
         #auth-screen { 
             height: 100vh; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            /* Gradasi modern menggunakan palet 950, 800, dan 500 */
             background: radial-gradient(circle at 15% 25%, #2A5328 0%, transparent 40%),
                         radial-gradient(circle at 85% 85%, #489744 0%, transparent 40%),
                         #0E250E; 
         }
         
-        .login-box-new { 
-            background: #ffffff; /* Putih bersih */
-            padding: 40px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
-            width: 100%; 
-            max-width: 420px; 
-        }
-
+        .login-box-new { background: #ffffff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); width: 100%; max-width: 420px; }
         .login-header { text-align: center; margin-bottom: 25px; }
         .login-header h2 { color: var(--primary-dark); font-size: 22px; margin: 5px 0 0; line-height: 1.3; }
         .login-header .subtitle { font-size: 13px; color: #555; margin-bottom: 12px; }
         .login-header .badge { background: var(--primary-light); color: var(--primary-dark); padding: 6px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; }
         
-        /* Pastikan input icon dan forgot password menggunakan warna baru */
+        /* Perbaikan form input dan ikon yang berantakan */
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 12px; color: #333; font-weight: bold; margin-bottom: 8px; }
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 14px;}
+        .form-control-new { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; background: #fff; transition: 0.3s; }
         .form-control-new:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(72,151,68,0.15); }
+        .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #888; cursor: pointer; }
+        
+        /* Perbaikan tata letak Lupa Password */
+        .login-options { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 20px; }
+        .remember-me { color: #555; display: flex; align-items: center; gap: 5px; cursor: pointer; margin: 0; }
         .forgot-pass { color: var(--primary); text-decoration: none; font-weight: bold; }
-
-        .btn-login-new { width: 100%; padding: 12px; background: #1e5a2f; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
-        .btn-login-new:hover { background: #154c27; }
-
+        
+        .btn-login-new { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .btn-login-new:hover { background: var(--primary-hover); }
+        
         .divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: #999; font-size: 11px; }
         .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #ddd; }
         .divider span { padding: 0 10px; }
-
+        
         .btn-sso { width: 100%; padding: 10px; background: #fff; color: #333; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
         .btn-sso:hover { background: #f9f9f9; }
-
         .login-footer-new { text-align: center; font-size: 10px; color: #777; margin-top: 25px; line-height: 1.6; }
-        
-        /* App Layout */
         /* App Layout */
         #app-screen { display: none; height: 100vh; }
         .sidebar { width: var(--sidebar-width); background: var(--primary); color: white; display: flex; flex-direction: column; transition: 0.3s; }
@@ -218,7 +218,7 @@
             <div class="divider"><span>atau</span></div>
 
             <button type="button" class="btn-sso" onclick="alert('Fitur SSO Google sedang dalam pengembangan')">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="18"> Login dengan SSO Google
+                <i class="fab fa-google" style="color: #DB4437;"></i> Login dengan SSO Google
             </button>
 
             <div class="login-footer-new">
