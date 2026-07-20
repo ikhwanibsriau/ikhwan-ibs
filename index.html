@@ -691,25 +691,26 @@
         }
 
         // Fungsi Setup Tampilan Setelah Login
+        // Setup Tampilan (VERSI FIX)
         function setupApp() {
             document.getElementById('auth-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'flex';
             
-            // Set data profile user ke Topbar
+            // Update UI Profile
             if(currentUser && currentUser.nama) {
-                // Ambil inisial huruf pertama
                 document.getElementById('user-initial').innerText = currentUser.nama.charAt(0).toUpperCase();
-                // Potong nama jika terlalu panjang (misal panggil kata pertama saja)
                 document.getElementById('user-display-name').innerText = currentUser.nama.split(' ')[0].toUpperCase();
-                // Set jabatannya
                 document.getElementById('user-display-role').innerText = currentUser.role;
             }
             
-            // ... (sisa kodenya biarkan sama seperti sebelumnya)
-            
+            // Tampilkan menu khusus admin
             if(currentUser && currentUser.role === 'Super Admin') {
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
             }
+
+            // Panggil navigate dengan aman
+            navigate('dashboard');
+        }
             
             // Tarik data santri untuk Autocomplete
             apiCall({ action: 'getTableData', sheetName: 'Santri' }).then(res => {
@@ -752,12 +753,15 @@
             }
         }
 
-        // Navigasi Antar Menu
+        // Navigasi Antar Menu (VERSI FIX)
         function navigate(view) {
+            // Sembunyikan semua section
             document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+            
+            // Hapus kelas 'active' dari semua menu
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            event && event.currentTarget.classList.add('active');
 
+            // Tampilkan section yang dipilih
             if(view === 'dashboard') {
                 document.getElementById('view-dashboard').style.display = 'block';
                 loadDashboard();
@@ -767,6 +771,12 @@
                 document.getElementById('view-generic').style.display = 'block';
                 document.getElementById('view-title').innerText = schemaDef.title;
                 loadTableData();
+            }
+
+            // Cari tombol menu yang diklik dan tambahkan kelas 'active' dengan aman
+            const clickedMenu = event ? event.currentTarget : document.querySelector(`[onclick="navigate('${view}')"]`);
+            if (clickedMenu) {
+                clickedMenu.classList.add('active');
             }
         }
 
