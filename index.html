@@ -489,22 +489,22 @@
 
                 <div id="view-generic" class="view-section">
                     <div class="header-action">
-                        <h2 id="view-title">Data</h2>
+                        <h2 id="view-title" style="font-weight: 700;">Data</h2>
                         <div style="display: flex; gap: 15px; align-items: center;">
                             <!-- Kotak Pencarian (Search Bar) -->
                             <div style="position: relative;">
                                 <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
-                                <input type="text" id="searchInput" class="form-control" style="padding-left: 35px; width: 280px; border-radius: 8px; border: 1.5px solid #d1d5db;" placeholder="Cari Nama, NIS, Kamar, Kelas..." onkeyup="filterTable()">
+                                <input type="text" id="searchInput" class="form-control" style="padding-left: 35px; width: 280px; border-radius: 8px; border: 1.5px solid #d1d5db;" placeholder="Cari Nama, NIS, Kamar..." onkeyup="filterTable()">
                             </div>
                             
-                            <!-- Tombol Tambah -->
+                            <!-- Tombol Tambah (Hanya di Kanan Atas) -->
                             <button class="btn" style="box-shadow: 0 4px 6px rgba(72,151,68,0.2);" onclick="openModal()">
                                 <i class="fas fa-plus"></i> Tambah
                             </button>
                         </div>
                     </div>
                     
-                    <!-- Ini bagian tabel yang sepertinya tidak sengaja terhapus tadi bos -->
+                    <!-- Area Tabel -->
                     <div class="table-responsive">
                         <table id="data-table">
                             <thead id="data-table-head"></thead>
