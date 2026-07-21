@@ -529,9 +529,13 @@
                     { name: 'pembina', label: 'Pembina Asrama', type: 'text', req: true },
                     { name: 'nis', label: 'NIS', type: 'text', req: true },
                     { name: 'nama', label: 'Nama Lengkap', type: 'text', req: true, full: true },
-                    { name: 'jenjang', label: 'Jenjang (1-6)', type: 'select', options: ['1','2','3','4','5','6'] },
-                    { name: 'kelas', label: 'Kelas', type: 'text' },
+                    
+                    // -- PERUBAHAN ADA DI SINI --
+                    { name: 'kelas', label: 'Kelas (1-6)', type: 'select', options: ['1','2','3','4','5','6'] },
                     { name: 'kamar', label: 'Kamar', type: 'text' },
+                    { name: 'namakelas', label: 'Nama Kelas', type: 'text' },
+                    // -----------------------------
+                    
                     { name: 'tmplahir', label: 'Tempat Lahir', type: 'text' },
                     { name: 'tgllahir', label: 'Tanggal Lahir', type: 'date' },
                     { name: 'jk', label: 'Jenis Kelamin', type: 'select', options: ['Laki-laki', 'Perempuan'] },
@@ -543,9 +547,9 @@
                     { name: 'hp', label: 'No HP (Orang Tua)', type: 'text' }
                 ],
                 
-                // Tampilan Tabel (Sederhana)
-                tableHeaders: ['NIS', 'Gedung', 'Pembina', 'Nama', 'Jenjang', 'Kamar', 'Kelas', 'Status'],
-                cols: ['nis', 'asrama', 'pembina', 'nama', 'jenjang', 'kamar', 'kelas', 'status']
+                // Tampilan Tabel (Sederhana) - PERUBAHAN DI SINI JUGA
+                tableHeaders: ['NIS', 'Gedung', 'Pembina', 'Nama', 'Kelas', 'Kamar', 'Nama Kelas', 'Status'],
+                cols: ['nis', 'asrama', 'pembina', 'nama', 'kelas', 'kamar', 'namakelas', 'status']
             },
             
             pelanggaran: {
