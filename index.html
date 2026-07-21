@@ -116,28 +116,36 @@
            ========================================= */
         .dashboard-container { display: flex; flex-direction: column; gap: 20px; }
         
-        /* 1. Hero Banner */
+        /* 1. Hero Banner (Dengan Background Foto) */
         .dash-banner {
-            background: linear-gradient(135deg, #1e5a2f, #2b7042);
+            /* GANTI URL DI BAWAH INI DENGAN LINK FOTO BOS NANTINYA */
+            background: linear-gradient(to right, #1e5a2f 40%, rgba(30, 90, 47, 0.1) 100%), 
+                        url('https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center right; /* Memastikan foto fokus di sebelah kanan */
             border-radius: 15px;
-            padding: 30px;
+            padding: 40px 30px; /* Diperbesar agar foto terlihat luas */
             color: white;
             display: flex;
-            justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 15px rgba(30,90,47,0.2);
             position: relative;
             overflow: hidden;
         }
-        .dash-banner::after { /* Efek pattern/hiasan transparan di kanan */
-            content: '\f51f'; /* Ikon quran/buku dari FontAwesome */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            right: -20px;
-            top: -40px;
-            font-size: 200px;
-            opacity: 0.1;
+        
+        /* Hapus ornamen ikon lama */
+        .dash-banner::after { display: none; }
+        
+        .dash-banner h2 { 
+            font-size: 26px; 
+            margin-bottom: 5px; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Efek bayangan agar teks menonjol */
+        }
+        
+        .dash-banner p { 
+            font-size: 14px; 
+            opacity: 0.95; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
         }
         .dash-banner h2 { font-size: 24px; margin-bottom: 5px; position: relative; z-index: 2; }
         .dash-banner p { font-size: 14px; opacity: 0.9; position: relative; z-index: 2; }
@@ -256,12 +264,13 @@
                         
                         <!-- 1. Hero Banner -->
                         <div class="dash-banner">
-                            <div>
+                            <div style="max-width: 65%;"> <!-- Membatasi area teks hanya 65% kiri -->
                                 <h2>Ahlan wa Sahlan, <span id="dash-nama">Admin</span>!</h2>
-                                <p>Berikut adalah ringkasan data pondok pesantren hari ini.</p>
-                            </div>
-                            <div class="dash-actions">
-                                <button class="btn-white" onclick="navigate('pelanggaran')"><i class="fas fa-plus"></i> Input Pelanggaran</button>
+                                <p style="margin-bottom: 15px;">Berikut adalah ringkasan data pondok pesantren hari ini.</p>
+                                
+                                <div class="dash-actions">
+                                    <button class="btn-white" onclick="navigate('pelanggaran')"><i class="fas fa-plus"></i> Input Pelanggaran</button>
+                                </div>
                             </div>
                         </div>
 
