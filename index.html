@@ -159,13 +159,11 @@
                     { name: 'nis', label: 'NIS', type: 'text', req: true },
                     { name: 'nama', label: 'Nama Lengkap', type: 'text', req: true, full: true },
                     
-                    // REVISI 1: Jenjang diganti jadi Kelas
+                    // -- PERUBAHAN ADA DI SINI --
                     { name: 'kelas', label: 'Kelas (1-6)', type: 'select', options: ['1','2','3','4','5','6'] },
-                    
                     { name: 'kamar', label: 'Kamar', type: 'text' },
-                    
-                    // REVISI 2: Kelas lama diganti jadi Nama Kelas
                     { name: 'namakelas', label: 'Nama Kelas', type: 'text' },
+                    // -----------------------------
                     
                     { name: 'tmplahir', label: 'Tempat Lahir', type: 'text' },
                     { name: 'tgllahir', label: 'Tanggal Lahir', type: 'date' },
@@ -178,10 +176,24 @@
                     { name: 'hp', label: 'No HP (Orang Tua)', type: 'text' }
                 ],
                 
-                // Tampilan Tabel (Sederhana) - Menyesuaikan Header
+                // Tampilan Tabel (Sederhana) - PERUBAHAN DI SINI JUGA
                 tableHeaders: ['NIS', 'Gedung', 'Pembina', 'Nama', 'Kelas', 'Kamar', 'Nama Kelas', 'Status'],
                 cols: ['nis', 'asrama', 'pembina', 'nama', 'kelas', 'kamar', 'namakelas', 'status']
             },
+            
+            pelanggaran: {
+                title: "Data Pelanggaran", table: "Pelanggaran",
+                fields: [
+                    { name: 'id', label: 'ID', type: 'hidden' },
+                    { name: 'tanggal', label: 'Tanggal', type: 'date', req: true },
+                    { name: 'nama_santri', label: 'Nama Santri', type: 'autocomplete', req: true },
+                    { name: 'pelanggaran', label: 'Pelanggaran', type: 'text', full: true, req: true },
+                    { name: 'poin', label: 'Poin', type: 'number', req: true },
+                    { name: 'tindakan', label: 'Tindak Lanjut', type: 'text' }
+                ],
+                cols: ['tanggal', 'nama_santri', 'pelanggaran', 'poin', 'tindakan']
+            }
+        };
             
             pelanggaran: {
                 title: "Data Pelanggaran", table: "Pelanggaran",
