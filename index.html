@@ -1,267 +1,714 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEM MANAJEMEN SANTRI (SMS)</title>
-    <!-- FontAwesome, ChartJS, & SweetAlert2 -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <style>
-        :root {
-            --primary: #489744;
-            --primary-hover: #3A8237;
-            --primary-dark: #244423;
-            --primary-light: #E4F5E3;
-            --bg: #F4FAF3;
-            --text-dark: #1f2937;
-            --sidebar-width: 250px;
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
-        
-        #auth-screen { 
-            height: 100vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            background: radial-gradient(circle at 15% 25%, #2A5328 0%, transparent 40%), 
-                        radial-gradient(circle at 85% 85%, #489744 0%, transparent 40%), #0E250E; 
-        }
-        .login-box-new { background: #ffffff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); width: 100%; max-width: 420px; }
-        .login-header { text-align: center; margin-bottom: 25px; }
-        .login-header h2 { color: var(--primary-dark); font-size: 22px; margin: 5px 0 0; font-weight: 700; }
-        .input-group { margin-bottom: 15px; }
-        .form-control-new { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: border 0.3s; }
-        .form-control-new:focus { border-color: var(--primary); }
-        .btn-login-new { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; transition: background 0.3s; }
-        .btn-login-new:hover { background: var(--primary-hover); }
-        
-        #app-screen { display: none; height: 100vh; overflow: hidden; }
-        .sidebar { width: var(--sidebar-width); background: var(--primary-dark); color: white; display: flex; flex-direction: column; transition: width 0.3s; }
-        .sidebar.collapsed { width: 70px; }
-        .sidebar.collapsed .nav-item span { display: none; }
-        .sidebar.collapsed .nav-item { justify-content: center; padding: 15px; }
-        
-        .nav-menu { margin-top: 20px; }
-        .nav-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; color: #a7cfa5; transition: all 0.3s; gap: 15px; }
-        .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
-        .nav-item.active { background: var(--bg); color: var(--primary); font-weight: bold; border-radius: 20px 0 0 20px; margin-left: 10px; }
-        
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .topbar { height: 70px; background: #ffffff; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 10; transition: background-color 0.3s; }
-        .topbar i { font-size: 20px; cursor: pointer; color: var(--text-dark); transition: color 0.3s; }
-        .topbar-right { display: flex; gap: 20px; align-items: center; }
-        
-        .content-area { flex: 1; padding: 20px; overflow-y: auto; background-color: var(--bg); transition: background-color 0.3s; }
-        .view-section { animation: fadeIn 0.3s ease-in; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Spinner Animasi */
-        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEM MANAJEMEN SANTRI (SMS)</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            /* Menggunakan palet "Fruit Salad" Tailwind */
+            --primary: #489744;       /* 500: Hijau Utama (Tombol, Aksen aktif) */
+            --primary-hover: #3A8237; /* 600: Hijau saat tombol disorot */
+            --primary-dark: #244423;  /* 900: Hijau Gelap (Sidebar & Header) */
+            --primary-light: #E4F5E3; /* 100: Hijau Terang (Latar belakang elemen) */
+            --bg: #F4FAF3;            /* 50: Latar belakang utama aplikasi */
+            --text-dark: #1f2937;     /* Abu-abu gelap modern untuk teks */
+            --sidebar-width: 250px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; }
+        
+        /* Auth Screen (Berdasarkan Referensi Gambar) */
+        /* =========================================
+           AUTH SCREEN (LOGIN)
+           ========================================= */
+        #auth-screen { 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: radial-gradient(circle at 15% 25%, #2A5328 0%, transparent 40%),
+                        radial-gradient(circle at 85% 85%, #489744 0%, transparent 40%),
+                        #0E250E; 
+        }
+        
+        .login-box-new { background: #ffffff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); width: 100%; max-width: 420px; }
+        .login-header { text-align: center; margin-bottom: 25px; }
+        .login-header h2 { color: var(--primary-dark); font-size: 22px; margin: 5px 0 0; line-height: 1.3; }
+        .login-header .subtitle { font-size: 13px; color: #555; margin-bottom: 12px; }
+        .login-header .badge { background: var(--primary-light); color: var(--primary-dark); padding: 6px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        
+        /* Perbaikan form input dan ikon yang berantakan */
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 12px; color: #333; font-weight: bold; margin-bottom: 8px; }
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 14px;}
+        .form-control-new { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; background: #fff; transition: 0.3s; }
+        .form-control-new:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(72,151,68,0.15); }
+        .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #888; cursor: pointer; }
+        
+        /* Perbaikan tata letak Lupa Password */
+        .login-options { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 20px; }
+        .remember-me { color: #555; display: flex; align-items: center; gap: 5px; cursor: pointer; margin: 0; }
+        .forgot-pass { color: var(--primary); text-decoration: none; font-weight: bold; }
+        
+        .btn-login-new { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .btn-login-new:hover { background: var(--primary-hover); }
+        
+        .divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: #999; font-size: 11px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #ddd; }
+        .divider span { padding: 0 10px; }
+        
+        .btn-sso { width: 100%; padding: 10px; background: #fff; color: #333; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-sso:hover { background: #f9f9f9; }
+        .login-footer-new { text-align: center; font-size: 10px; color: #777; margin-top: 25px; line-height: 1.6; }
+        /* App Layout & Mini Sidebar */
+        #app-screen { display: none; height: 100vh; overflow: hidden; }
+        
+        .sidebar { 
+            width: var(--sidebar-width); 
+            background: var(--primary-dark); 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transisi mulus */
+            z-index: 10;
+        }
+        
+        /* Saat diklik, sidebar tidak hilang, tapi mengecil jadi 85px */
+        .sidebar.collapsed { width: 85px; }
 
-        /* Dark Mode */
-        body.dark-mode { --bg: #111827; --text-dark: #f3f4f6; }
-        body.dark-mode .topbar { background: #1f2937; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-        body.dark-mode .topbar i { color: #f3f4f6; }
-        body.dark-mode .login-box-new { background: #1f2937; color: white; }
-        body.dark-mode .login-header h2 { color: var(--primary-light); }
-        body.dark-mode .form-control-new { background: #374151; border-color: #4b5563; color: white; }
-    </style>
+        .sidebar-header { 
+            height: 80px; 
+            display: flex; 
+            align-items: center; 
+            padding-left: 25px; 
+            white-space: nowrap; 
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        /* Ikon Logo saat sidebar mengecil */
+        .sidebar-logo-icon { font-size: 24px; color: var(--primary-light); min-width: 40px; }
+        .sidebar-header h3 { font-size: 15px; line-height: 1.3; transition: opacity 0.3s; }
+        .sidebar.collapsed .sidebar-header h3 { opacity: 0; pointer-events: none; }
+
+        .nav-menu { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px 0 20px 15px; }
+        
+        /* Gaya Item Navigasi */
+        .nav-item { 
+            padding: 15px 20px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            transition: 0.3s; 
+            position: relative; 
+            border-radius: 30px 0 0 30px; /* Melengkung di kiri, datar di kanan */
+            margin-bottom: 8px; 
+            color: #a7cfa5; /* Hijau redup */
+            white-space: nowrap;
+        }
+        
+        .nav-item i { font-size: 20px; min-width: 35px; text-align: left; z-index: 2; transition: 0.3s; }
+        .nav-item span { font-size: 14px; font-weight: 500; transition: opacity 0.3s; z-index: 2; }
+        .sidebar.collapsed .nav-item span { opacity: 0; pointer-events: none; }
+
+        /* Efek Sorot (Hover) */
+        .nav-item:hover { color: white; }
+
+        /* =========================================
+           EFEK CUTOUT / INSET ACTIVE (Sesuai Gambar)
+           ========================================= */
+        .nav-item.active { 
+            background: var(--bg); /* Menyatu dengan warna latar aplikasi */
+            color: var(--primary); /* Teks jadi hijau terang */
+            font-weight: bold;
+        }
+        
+        /* Membuat lengkungan "bolong" di atas dan bawah menu aktif */
+        .nav-item.active::before,
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            width: 25px;
+            height: 25px;
+            background: transparent;
+            z-index: 1;
+        }
+        
+        .nav-item.active::before {
+            top: -25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 10px 10px 0 10px var(--bg); /* Menambal warna background utama */
+        }
+        
+        .nav-item.active::after {
+            bottom: -25px;
+            border-top-right-radius: 25px;
+            box-shadow: 10px -10px 0 10px var(--bg);
+        }
+        /* =========================================
+           MAIN LAYOUT & TOPBAR (KUNCI POSISI)
+           ========================================= */
+        .main-content { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; /* Kunci tinggi layar penuh */
+            overflow: hidden; 
+        }
+        
+        .topbar { 
+            height: 70px; 
+            min-height: 70px; 
+            width: 100%; 
+            background: #ffffff; 
+            display: flex; 
+            justify-content: space-between; /* Paksa Kiri dan Kanan pisah */
+            align-items: center; 
+            padding: 0 25px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            z-index: 10; 
+        }
+        
+        .topbar-left { display: flex; align-items: center; }
+        .topbar-right { display: flex; align-items: center; gap: 20px; }
+        
+        .content-area { 
+            flex: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            background-color: var(--bg); 
+            position: relative; 
+            z-index: 1; 
+        }
+        .btn { padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-danger { background: #e53935; }
+        .btn-warning { background: #ffb300; color: #333;}
+        
+        /* Layouts & Tables */
+        .view-section { display: none; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px;}
+        th { background: var(--primary); color: white; }
+        
+        /* Loading Overlay */
+        #loader { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index: 9999; justify-content:center; align-items:center; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Modals & Dashboard Grid (Sederhana) */
+        .grid-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 20px; }
+        .card { background: white; padding: 20px; border-radius: 10px; border-left: 5px solid var(--primary); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 10px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        .full-width { grid-column: 1 / -1; }
+    /* =========================================
+           MODERN DASHBOARD LAYOUT
+           ========================================= */
+        .dashboard-container { display: flex; flex-direction: column; gap: 20px; }
+        
+        /* 1. Hero Banner (Dengan Background Foto) */
+        .dash-banner {
+            /* Menggunakan --primary-dark (900) agar kontras dengan teks putih */
+            background: linear-gradient(to right, #244423 40%, rgba(36, 68, 35, 0.1) 100%), 
+                        url('https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            /* ... (kode lainnya tetap sama) ... */
+            background-position: center right; /* Memastikan foto fokus di sebelah kanan */
+            border-radius: 15px;
+            padding: 40px 30px; /* Diperbesar agar foto terlihat luas */
+            color: white;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(30,90,47,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Hapus ornamen ikon lama */
+        .dash-banner::after { display: none; }
+        
+        .dash-banner h2 { 
+            font-size: 26px; 
+            margin-bottom: 5px; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); /* Efek bayangan agar teks menonjol */
+        }
+        
+        .dash-banner p { 
+            font-size: 14px; 
+            opacity: 0.95; 
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.5); 
+        }
+        .dash-banner h2 { font-size: 24px; margin-bottom: 5px; position: relative; z-index: 2; }
+        .dash-banner p { font-size: 14px; opacity: 0.9; position: relative; z-index: 2; }
+        .dash-actions { display: flex; gap: 10px; position: relative; z-index: 2; }
+        .btn-white { background: white; color: #1e5a2f; border: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        /* 2. Top Cards (4 Kolom) */
+        .dash-cards-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .dash-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: center; }
+        .dash-card.dark { background: var(--primary-dark); color: white; }
+        .dash-card .title { font-size: 13px; color: #777; margin-bottom: 10px; font-weight: bold; }
+        .dash-card.dark .title { color: var(--primary-light); }
+        .dash-card .value { font-size: 28px; font-weight: bold; color: #333; }
+        .dash-card.dark .value { color: white; }
+        .dash-card .desc { font-size: 11px; margin-top: 10px; color: #888; display: flex; align-items: center; gap: 5px; }
+        .dash-card .badge-green { background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
+
+        /* 3. Middle & Bottom Layouts (Grid) */
+        .dash-grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .dash-grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .dash-panel { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .dash-panel h3 { font-size: 16px; margin-bottom: 20px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        
+        /* List Item Styling (Untuk daftar pelanggaran/izin di bawah) */
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eee; }
+        .list-item:last-child { border-bottom: none; }
+        .list-info h4 { font-size: 14px; color: #333; margin-bottom: 3px; }
+        .list-info p { font-size: 12px; color: #777; }
+        .status-badge { padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+        .status-danger { background: #ffebee; color: #c62828; }
+        .status-warning { background: #fff8e1; color: #f57f17; }
+    /* =========================================
+           TOPBAR, ICONS & PROFILE DROPDOWN
+           ========================================= */
+        .topbar-right { display: flex; align-items: center; gap: 20px; }
+        
+        .icon-btn { background: transparent; border: none; font-size: 20px; color: #4b5563; cursor: pointer; transition: 0.2s; position: relative; }
+        .icon-btn:hover { color: var(--primary); }
+        
+        /* Titik merah notifikasi */
+        .notify-badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 1px solid #fff; }
+        
+        /* Profile Trigger (Nama & Avatar) */
+        .profile-menu-container { position: relative; display: inline-block; }
+        .profile-trigger { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 5px; border-radius: 8px; transition: 0.2s; }
+        .profile-trigger:hover { background: rgba(0,0,0,0.03); }
+        
+        .profile-text { display: flex; flex-direction: column; text-align: right; }
+        .profile-name { font-size: 14px; font-weight: bold; color: #374151; letter-spacing: 0.5px; }
+        .profile-role { font-size: 11px; color: #6b7280; }
+        
+        /* Avatar Bulat */
+        .user-avatar { width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .online-dot { position: absolute; bottom: 0; right: 0; width: 12px; height: 12px; background: #10b981; border: 2px solid #fff; border-radius: 50%; }
+        
+        /* Dropdown Menu Box */
+        .profile-dropdown { position: absolute; top: 120%; right: 0; background: #fff; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 200px; display: none; flex-direction: column; overflow: hidden; z-index: 100; border: 1px solid #f3f4f6; }
+        .profile-dropdown.show { display: flex; animation: fadeInDown 0.2s ease-out; }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .dropdown-item { padding: 12px 18px; display: flex; align-items: center; gap: 12px; font-size: 14px; color: #4b5563; cursor: pointer; transition: 0.2s; border-bottom: 1px solid #f9fafb; }
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background: #f3f4f6; color: var(--primary); }
+        .dropdown-item.logout-item { color: #ef4444; }
+        .dropdown-item.logout-item:hover { background: #fef2f2; color: #dc2626; }
+
+        /* Penyesuaian saat Dark Mode */
+        body.dark-mode .icon-btn { color: #d1d5db; }
+        body.dark-mode .profile-name { color: #f3f4f6; }
+        body.dark-mode .profile-role { color: #9ca3af; }
+        body.dark-mode .online-dot { border-color: #1f2937; }
+        body.dark-mode .profile-dropdown { background: #1f2937; border-color: #374151; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        body.dark-mode .dropdown-item { color: #d1d5db; border-color: #374151; }
+        body.dark-mode .dropdown-item:hover { background: #374151; color: white; }
+        body.dark-mode .dropdown-item.logout-item:hover { background: #7f1d1d; }
+
+        // Fungsi Toggle Dark Mode (Versi Anti-Gagal)
+        function toggleDarkMode() {
+            // 1. Ubah warna background (CSS)
+            document.body.classList.toggle('dark-mode');
+            
+            // 2. Ubah ikon bulan jadi matahari
+            const btn = document.getElementById('darkModeBtn');
+            if (btn) {
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    if (document.body.classList.contains('dark-mode')) {
+                        icon.className = 'fas fa-sun'; // Ikon matahari
+                        icon.style.color = '#fbbf24';  // Warna kuning
+                    } else {
+                        icon.className = 'far fa-moon'; // Ikon bulan
+                        icon.style.color = '';          // Kembali normal
+                    }
+                }
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Loader Screen -->
-    <div id="loader" style="display:none; position:fixed; z-index:9999; width:100%; height:100%; background:rgba(255,255,255,0.8); justify-content:center; align-items:center;">
-        <div class="spinner"></div>
-    </div>
 
-    <!-- Auth (Login Screen) -->
-    <div id="auth-screen">
-        <div class="login-box-new">
-            <div class="login-header">
-                <h2>SISTEM MANAJEMEN SANTRI</h2>
-                <p style="color: gray; font-size: 14px; margin-top: 5px;">Silakan login untuk melanjutkan</p>
-            </div>
-            <form onsubmit="handleLogin(event)">
-                <div class="input-group">
-                    <input type="text" id="username" class="form-control-new" placeholder="Username" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="password" class="form-control-new" placeholder="Password" required>
-                </div>
-                <button type="submit" class="btn-login-new">LOGIN <i class="fas fa-sign-in-alt ml-2"></i></button>
-            </form>
-        </div>
-    </div>
+    <div id="loader"><div class="spinner"></div></div>
 
-    <!-- App (Dashboard Screen) -->
-    <div id="app-screen">
-        <div class="sidebar" id="sidebar">
-            <div style="padding: 20px; font-weight: bold; font-size: 1.2rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <i class="fas fa-mosque"></i> <span class="sidebar-title">SMS Web</span>
-            </div>
-            <div class="nav-menu">
-                <div class="nav-item active" onclick="navigate('dashboard', this)"><i class="fas fa-chart-line"></i> <span>Dashboard</span></div>
-                <div class="nav-item" onclick="navigate('santri', this)"><i class="fas fa-users"></i> <span>Data Santri</span></div>
-            </div>
-        </div>
-        <div class="main-content">
-            <div class="topbar">
-                <i class="fas fa-bars" onclick="toggleSidebar()"></i>
-                <div class="topbar-right">
-                    <i id="darkModeBtn" class="far fa-moon" onclick="toggleDarkMode()" title="Ganti Tema"></i>
-                    <i class="fas fa-sign-out-alt" style="color: #ef4444;" onclick="handleLogout()" title="Keluar"></i>
-                </div>
-            </div>
-            <div class="content-area">
-                <div id="view-dashboard" class="view-section">
-                    <h2 style="margin-bottom: 20px;">Selamat Datang di Dashboard</h2>
-                    <p>Ringkasan data manajemen santri akan tampil di sini.</p>
-                </div>
-                <div id="view-generic" class="view-section" style="display:none;">
-                    <h2 style="margin-bottom: 20px;">Data Santri</h2>
-                    <p>Tabel dan manajemen data santri.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Login Screen -->
+    <div id="auth-screen">
+        <div class="login-box-new">
+            <div class="login-header">
+                <i class="fas fa-book-reader" style="font-size: 35px; color: #1e5a2f; margin-bottom: 10px;"></i>
+                <h2>SISTEM MANAJEMEN SANTRI<br>(SMS)</h2>
+                <div class="subtitle">Pembinaan Santri Putra</div>
+                <span class="badge">Administrasi & Pembinaan Santri</span>
+            </div>
 
-    <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycby007mXt-2sptjAsCgtEsMGlZMMytRVAWzOM87eopYdiyp0Qx5obG0D9IZ5eIUzQMQg/exec";
-        let currentUser = null; // PERBAIKAN: Mendeklarasikan variabel currentUser
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label>Username</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="username" class="form-control-new" placeholder="Masukkan username" required>
+                    </div>
+                </div>
 
-        window.onload = () => {
-            const savedUser = localStorage.getItem('sim_user');
-            if(savedUser) { 
-                currentUser = JSON.parse(savedUser);
-                setupApp(); 
-            } else {
-                document.getElementById('auth-screen').style.display = 'flex';
-                document.getElementById('app-screen').style.display = 'none';
-            }
-            
-            // Cek tema yang tersimpan
-            if(localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.getElementById('darkModeBtn').className = 'fas fa-sun';
-            }
-        };
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" class="form-control-new" placeholder="Masukkan password" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePass()" id="eye-icon"></i>
+                    </div>
+                </div>
 
-        async function handleLogin(e) {
-            e.preventDefault();
-            
-            // PERBAIKAN: Tampilkan loader saat memproses login
-            document.getElementById('loader').style.display = 'flex';
-            const usernameInput = document.getElementById('username').value;
-            const passwordInput = document.getElementById('password').value;
+                <div class="login-options">
+                    <label class="remember-me"><input type="checkbox"> Ingat saya</label>
+                    <a href="#" class="forgot-pass">Lupa password?</a>
+                </div>
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ 
-                        action: 'login', 
-                        username: usernameInput, 
-                        password: passwordInput 
-                    })
-                });
-                
-                const res = await response.json();
-                
-                if(res.success) {
-                    localStorage.setItem('sim_user', JSON.stringify(res.user));
-                    
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Login Berhasil',
-                        timer: 1500,
-                        showConfirmButton: false
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                } else {
-                    Swal.fire('Gagal Login', res.message || 'Username atau Password salah!', 'error');
-                }
-            } catch (error) {
-                console.error("Fetch error:", error);
-                Swal.fire('Koneksi Gagal', 'Terjadi kesalahan saat menghubungi server.', 'error');
-            } finally {
-                // Sembunyikan loader setelah proses selesai (baik sukses maupun gagal)
-                document.getElementById('loader').style.display = 'none';
-            }
-        }
+                <button type="submit" class="btn-login-new">LOGIN</button>
+            </form>
 
-        function setupApp() {
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'flex';
-        }
+            <div class="divider"><span>atau</span></div>
 
-        function navigate(view, element) {
-            // Sembunyikan semua section
-            document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
-            
-            // Tampilkan section yang dipilih
-            if(view === 'dashboard') {
-                document.getElementById('view-dashboard').style.display = 'block';
-            } else {
-                document.getElementById('view-generic').style.display = 'block';
-            }
-            
-            // Pindahkan class active ke menu yang diklik
-            if(element) {
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                element.classList.add('active');
-            }
-        }
-        
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('collapsed');
-            
-            const title = document.querySelector('.sidebar-title');
-            if(sidebar.classList.contains('collapsed')) {
-                title.style.display = 'none';
-            } else {
-                title.style.display = 'inline';
-            }
-        }
+            <button type="button" class="btn-sso" onclick="alert('Fitur SSO Google sedang dalam pengembangan')">
+                <i class="fab fa-google" style="color: #DB4437;"></i> Login dengan SSO Google
+            </button>
 
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            const icon = document.getElementById('darkModeBtn');
-            
-            if(document.body.classList.contains('dark-mode')) {
-                icon.className = 'fas fa-sun';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                icon.className = 'far fa-moon';
-                localStorage.setItem('theme', 'light');
-            }
-        }
-        
-        // FITUR BARU: Menambahkan fungsi Logout
-        function handleLogout() {
-            Swal.fire({
-                title: 'Apakah Anda yakin?',
-                text: "Anda akan keluar dari sistem.",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#489744',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ya, Keluar!',
-                cancelButtonText: 'Batal'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    localStorage.removeItem('sim_user');
-                    window.location.reload();
-                }
-            })
-        }
-    </script>
+            <div class="login-footer-new">
+                Hubungi admin sistem untuk login dengan SSO Google<br>
+                Version 1.0.0 (Build 2026.07.20)<br>
+                &copy; 2026 Mathorart.id. All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app-screen">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <!-- Ikon Masjid ini akan bertindak sebagai Logo saat menu dikecilkan -->
+                <i class="fas fa-mosque sidebar-logo-icon"></i>
+                <h3>SISTEM MANAJEMEN<br>SANTRI (SMS)</h3>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <div class="nav-item active" onclick="navigate('dashboard')">
+                    <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                </div>
+                <div class="nav-item" onclick="navigate('santri')">
+                    <i class="fas fa-users"></i> <span>Data Santri</span>
+                </div>
+                <div class="nav-item" onclick="navigate('pelanggaran')">
+                    <i class="fas fa-exclamation-triangle"></i> <span>Pelanggaran</span>
+                </div>
+                <div class="nav-item" onclick="navigate('perizinan')">
+                    <i class="fas fa-door-open"></i> <span>Perizinan</span>
+                </div>
+                <div class="nav-item admin-only" onclick="navigate('master')">
+                    <i class="fas fa-database"></i> <span>Master Data</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            
+            <!-- Topbar -->
+            <div class="topbar">
+                <!-- BAGIAN KIRI: Tombol Menu Garis Tiga -->
+                <div class="topbar-left">
+                    <i class="fas fa-bars" style="cursor:pointer; font-size: 20px; color: #4b5563;" onclick="toggleSidebar()"></i>
+                </div>
+                
+                <!-- BAGIAN KANAN: Ikon & Profil -->
+                <div class="topbar-right">
+                    <!-- Tombol Mode Gelap/Terang -->
+                    <button class="icon-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Mode Gelap/Terang">
+                        <i class="far fa-moon"></i>
+                    </button>
+                    
+                    <!-- Tombol Notifikasi -->
+                    <button class="icon-btn" onclick="alert('Belum ada notifikasi baru.')" title="Notifikasi">
+                        <i class="far fa-bell"></i>
+                        <span class="notify-badge"></span>
+                    </button>
+                    
+                    <!-- Profile Menu Dropdown -->
+                    <div class="profile-menu-container">
+                        <div class="profile-trigger" onclick="toggleProfileMenu()">
+                            <div class="profile-text">
+                                <span class="profile-name" id="user-display-name">Admin</span>
+                                <span class="profile-role" id="user-display-role">Super Admin</span>
+                            </div>
+                            <div class="user-avatar">
+                                <span id="user-initial">A</span>
+                                <div class="online-dot"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Isi Dropdown Menu -->
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <div class="dropdown-item" onclick="alert('Fitur Biodata Diri sedang dikembangkan')">
+                                <i class="far fa-user"></i> Biodata Diri
+                            </div>
+                            <div class="dropdown-item" onclick="navigate('dashboard')">
+                                <i class="fas fa-arrow-left"></i> Back To Portal
+                            </div>
+                            <div class="dropdown-item logout-item" onclick="confirmLogout()">
+                                <i class="fas fa-power-off"></i> Logout
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Area Konten Utama -->
+            <div class="content-area">
+                <!-- Dashboard View (Layout Baru) -->
+                <div id="view-dashboard" class="view-section" style="display: block;">
+                    <div class="dashboard-container">
+                        
+                        <!-- 1. Hero Banner -->
+                        <div class="dash-banner">
+                            <div style="max-width: 65%;"> <!-- Membatasi area teks hanya 65% kiri -->
+                                <h2>Ahlan wa Sahlan, <span id="dash-nama">Admin</span>!</h2>
+                                <p>Berikut adalah ringkasan data pondok pesantren hari ini.</p>
+                            </div>
+                        </div>
+
+                        <!-- 2. Cards Row -->
+                        <div class="dash-cards-row" id="dash-cards-container">
+                            <!-- Akan diisi otomatis oleh JavaScript -->
+                        </div>
+
+                        <!-- 3. Middle Section (Chart 70% & Info 30%) -->
+                        <div class="dash-grid-2">
+                            <div class="dash-panel">
+                                <h3>Grafik Pelanggaran Bulanan</h3>
+                                <canvas id="chartPelanggaranBaru" height="100"></canvas>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Statistik Cepat Bulan Ini</h3>
+                                <!-- Progress Bar Tiruan ala gambar referensi -->
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Aman (0-19 Poin)</span> <strong>85%</strong></div>
+                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#4caf50; width:85%; height:100%; border-radius:5px;"></div></div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Perhatian (20-49 Poin)</span> <strong>10%</strong></div>
+                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#ffb300; width:10%; height:100%; border-radius:5px;"></div></div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Pembinaan (>50 Poin)</span> <strong>5%</strong></div>
+                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#e53935; width:5%; height:100%; border-radius:5px;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Bottom Section (2 List Berdampingan) -->
+                        <div class="dash-grid-half">
+                            <div class="dash-panel">
+                                <h3>5 Pelanggaran Terbaru</h3>
+                                <div id="list-pelanggaran-terbaru">
+                                    <p style="font-size:13px; color:#888;">Memuat data...</p>
+                                </div>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Santri Sedang Izin/Sakit</h3>
+                                <div id="list-izin-terbaru">
+                                     <p style="font-size:13px; color:#888;">Memuat data...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="view-generic" class="view-section">
+                    <div class="header-action">
+                        <h2 id="view-title">Data</h2>
+                        <div>
+                            <button class="btn" onclick="openModal()"><i class="fas fa-plus"></i> Tambah</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="data-table">
+                            <thead id="data-table-head"></thead>
+                            <tbody id="data-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="genericModal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title" style="margin-bottom:15px;">Form</h3>
+            <form id="genericForm" onsubmit="submitForm(event)">
+                <input type="hidden" id="form-id">
+                <div class="form-grid" id="form-fields"></div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button type="button" class="btn btn-danger" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    // MASUKKAN URL API KAMU DI SINI
+        const API_URL = "https://script.google.com/macros/s/AKfycby007mXt-2sptjAsCgtEsMGlZMMytRVAWzOM87eopYdiyp0Qx5obG0D9IZ5eIUzQMQg/exec"; 
+
+        let currentUser = null;
+        let currentModule = '';
+        let moduleData = [];
+        let schemaDef = {};
+        let listNamaSantri = [];
+
+        const schemas = {
+            santri: {
+                title: "Data Santri", table: "Santri",
+                fields: [
+                    { name: 'id', label: 'ID', type: 'hidden' },
+                    { name: 'nis', label: 'NIS', type: 'text', req: true },
+                    { name: 'nama', label: 'Nama Lengkap', type: 'text', req: true, full: true },
+                    { name: 'kelas', label: 'Kelas', type: 'select', options: ['7','8','9','10','11','12'] },
+                    { name: 'kamar', label: 'Kamar', type: 'text' },
+                    { name: 'status', label: 'Status', type: 'select', options: ['Aktif','Nonaktif'] }
+                ],
+                cols: ['nis', 'nama', 'kelas', 'kamar', 'status']
+            },
+            pelanggaran: {
+                title: "Data Pelanggaran", table: "Pelanggaran",
+                fields: [
+                    { name: 'id', label: 'ID', type: 'hidden' },
+                    { name: 'tanggal', label: 'Tanggal', type: 'date', req: true },
+                    { name: 'nama_santri', label: 'Nama Santri', type: 'autocomplete', req: true },
+                    { name: 'pelanggaran', label: 'Pelanggaran', type: 'text', full: true, req: true },
+                    { name: 'poin', label: 'Poin', type: 'number', req: true },
+                    { name: 'tindakan', label: 'Tindak Lanjut', type: 'text' }
+                ],
+                cols: ['tanggal', 'nama_santri', 'pelanggaran', 'poin', 'tindakan']
+            }
+        };
+
+        const showLoad = () => document.getElementById('loader').style.display = 'flex';
+        const hideLoad = () => document.getElementById('loader').style.display = 'none';
+        const toast = (msg, icon='success') => Swal.fire({toast:true, position:'top-end', icon:icon, title:msg, showConfirmButton:false, timer:3000});
+
+        async function apiCall(data) {
+            const response = await fetch(API_URL, { method: 'POST', redirect: 'follow', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(data) });
+            return await response.json();
+        }
+
+        window.onload = () => {
+            const savedUser = localStorage.getItem('sim_user');
+            if(savedUser) { currentUser = JSON.parse(savedUser); setupApp(); }
+        };
+
+        function handleLogin(e) {
+            e.preventDefault();
+            showLoad();
+            apiCall({ action: 'login', username: document.getElementById('username').value, password: document.getElementById('password').value })
+            .then(res => {
+                hideLoad();
+                if(res.success) { currentUser = res.user; localStorage.setItem('sim_user', JSON.stringify(currentUser)); setupApp(); toast('Login Berhasil'); }
+                else { toast(res.message, 'error'); }
+            });
+        }
+
+        function logout() { localStorage.removeItem('sim_user'); window.location.reload(); }
+
+        function confirmLogout() {
+            Swal.fire({ title: 'Keluar aplikasi?', icon: 'question', showCancelButton: true, confirmButtonColor: '#e53935', confirmButtonText: 'Ya, Logout' })
+            .then((result) => { if (result.isConfirmed) logout(); });
+        }
+
+        function setupApp() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'flex';
+            
+            if(currentUser && currentUser.nama) {
+                document.getElementById('user-initial').innerText = currentUser.nama.charAt(0).toUpperCase();
+                document.getElementById('user-display-name').innerText = currentUser.nama.split(' ')[0].toUpperCase();
+                document.getElementById('user-display-role').innerText = currentUser.role;
+            }
+            
+            if(currentUser && currentUser.role === 'Super Admin') {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+            }
+
+            apiCall({ action: 'getTableData', sheetName: 'Santri' }).then(res => {
+                if(res.success) listNamaSantri = res.data.map(s => s.nama);
+            });
+
+            navigate('dashboard');
+        }
+
+        function togglePass() {
+            const passInput = document.getElementById('password');
+            const icon = document.getElementById('eye-icon');
+            passInput.type = (passInput.type === 'password') ? 'text' : 'password';
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        }
+
+        function toggleProfileMenu() { document.getElementById("profileDropdown").classList.toggle("show"); }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.profile-menu-container')) {
+                document.querySelectorAll('.profile-dropdown').forEach(d => d.classList.remove('show'));
+            }
+        }
+
+        function navigate(view) {
+            document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+            if(view === 'dashboard') {
+                document.getElementById('view-dashboard').style.display = 'block';
+                loadDashboard();
+            } else if (schemas[view]) {
+                currentModule = view;
+                schemaDef = schemas[view];
+                document.getElementById('view-generic').style.display = 'block';
+                document.getElementById('view-title').innerText = schemaDef.title;
+                loadTableData();
+            }
+
+            const activeMenu = document.querySelector(`[onclick="navigate('${view}')"]`);
+            if (activeMenu) activeMenu.classList.add('active');
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('#darkModeBtn i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun'; icon.style.color = '#fbbf24';
+            } else {
+                icon.className = 'far fa-moon'; icon.style.color = '';
+            }
+        }
+        
+        // ... (fungsi loadDashboard, renderTable, dll tetap sama di bawah ini)
 </body>
 </html>
