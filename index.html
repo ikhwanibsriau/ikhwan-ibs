@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEM MANAJEMEN SANTRI (SMS)</title>
+    <title>SANTRI IKHWAN MANAJEMEN (SIM)</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -29,9 +29,8 @@
         .login-footer { margin-top: 20px; font-size: 13px; color: #777; }
         
         /* App Layout */
-        #app-screen { display: none; height: 100vh; }
+        #app-screen { display: none; display: flex; height: 100vh; }
         .sidebar { width: var(--sidebar-width); background: var(--primary); color: white; display: flex; flex-direction: column; transition: 0.3s; }
-        .sidebar.collapsed { margin-left: -250px; }
         .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .nav-menu { flex: 1; overflow-y: auto; padding: 10px 0; }
         .nav-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; transition: 0.3s; }
@@ -78,20 +77,21 @@
     <!-- Login Screen -->
     <div id="auth-screen">
         <div class="login-box">
-            <h2>SISTEM MANAJEMEN SANTRI<br>(SMS)</h2>
+            <h2>Sistem Administrasi<br>Pembinaan Santri</h2>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <input type="text" id="username" class="form-control" placeholder="Username" required>
                 <input type="password" id="password" class="form-control" placeholder="Password" required>
                 <button type="submit" class="btn-login">Masuk Aplikasi</button>
             </form>
-            <div class="login-footer">Versi 1.0.0 | Mathorart.id</div>
+            <div class="login-footer">Versi 1.0.0 | Pondok Pesantren</div>
         </div>
     </div>
 
     <!-- Main App -->
     <div id="app-screen">
-        <div class="sidebar-header">
-                <h3 style="font-size: 16px; line-height: 1.4;"><i class="fas fa-mosque"></i> SISTEM MANAJEMEN<br>SANTRI (SMS)</h3>
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-mosque"></i> SIM IKHWAN</h3>
             </div>
             <div class="nav-menu" id="nav-menu">
                 <div class="nav-item active" onclick="navigate('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</div>
@@ -152,7 +152,7 @@
 
     <script>
         // MASUKKAN URL API KAMU DI SINI (DARI GOOGLE APPS SCRIPT DEPLOYMENT TERBARU)
-        const API_URL = "https://script.google.com/macros/s/AKfycby007mXt-2sptjAsCgtEsMGlZMMytRVAWzOM87eopYdiyp0Qx5obG0D9IZ5eIUzQMQg/exec"; 
+        const API_URL = "URL_GOOGLE_APPS_SCRIPT_KAMU_DISINI"; 
 
         // State Management
         let currentUser = null;
@@ -198,20 +198,12 @@
             try {
                 const response = await fetch(API_URL, {
                     method: 'POST',
-                    // Gunakan redirect: 'follow' agar browser mengikuti pengalihan server Google
-                    redirect: 'follow', 
-                    headers: { 
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(data)
                 });
-                
-                // Pastikan response sukses sebelum parsing JSON
-                if (!response.ok) throw new Error("Jaringan bermasalah");
-                
                 return await response.json();
             } catch (err) {
-                console.error("Error API:", err);
+                console.error(err);
                 throw new Error("Gagal terhubung ke server database.");
             }
         }
