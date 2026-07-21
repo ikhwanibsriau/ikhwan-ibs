@@ -9,10 +9,13 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
-            --primary: #1e5a2f; /* Hijau dari referensi gambar */
-            --primary-hover: #164222;
-            --bg: #f4f6f9;
-            --text-dark: #333;
+            /* Menggunakan palet "Fruit Salad" Tailwind */
+            --primary: #489744;       /* 500: Hijau Utama (Tombol, Aksen aktif) */
+            --primary-hover: #3A8237; /* 600: Hijau saat tombol disorot */
+            --primary-dark: #244423;  /* 900: Hijau Gelap (Sidebar & Header) */
+            --primary-light: #E4F5E3; /* 100: Hijau Terang (Latar belakang elemen) */
+            --bg: #F4FAF3;            /* 50: Latar belakang utama aplikasi */
+            --text-dark: #1f2937;     /* Abu-abu gelap modern untuk teks */
             --sidebar-width: 250px;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -25,25 +28,25 @@
             display: flex; 
             justify-content: center; 
             align-items: center; 
-            /* Background hijau tua dengan efek cahaya (radial) */
-            background: radial-gradient(circle at 15% 25%, #2b7042 0%, transparent 40%),
-                        radial-gradient(circle at 85% 85%, #2b7042 0%, transparent 40%),
-                        #154c27; 
+            /* Gradasi modern menggunakan palet 950, 800, dan 500 */
+            background: radial-gradient(circle at 15% 25%, #2A5328 0%, transparent 40%),
+                        radial-gradient(circle at 85% 85%, #489744 0%, transparent 40%),
+                        #0E250E; 
         }
         
         .login-box-new { 
-            background: #f0f4f1; /* Putih agak kehijauan/abu */
+            background: #ffffff; /* Putih bersih */
             padding: 40px; 
-            border-radius: 20px; /* Sudut melengkung besar */
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
             width: 100%; 
             max-width: 420px; 
         }
 
         .login-header { text-align: center; margin-bottom: 25px; }
-        .login-header h2 { color: #1e5a2f; font-size: 22px; margin: 5px 0 0; line-height: 1.3; }
+        .login-header h2 { color: var(--primary-dark); font-size: 22px; margin: 5px 0 0; line-height: 1.3; }
         .login-header .subtitle { font-size: 13px; color: #555; margin-bottom: 12px; }
-        .login-header .badge { background: #d4e5d9; color: #1e5a2f; padding: 6px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .login-header .badge { background: var(--primary-light); color: var(--primary-dark); padding: 6px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; }
 
         .input-group { margin-bottom: 15px; text-align: left; }
         .input-group label { display: block; font-size: 12px; color: #333; font-weight: bold; margin-bottom: 8px; }
@@ -51,12 +54,12 @@
         .input-wrapper { position: relative; }
         .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 14px;}
         .form-control-new { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; background: #fff; transition: 0.3s; }
-        .form-control-new:focus { border-color: #1e5a2f; box-shadow: 0 0 0 3px rgba(30,90,47,0.1); }
+        .form-control-new:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(72,151,68,0.15); }
         .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #888; cursor: pointer; }
 
         .login-options { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 20px; }
         .remember-me { color: #555; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .forgot-pass { color: #1e5a2f; text-decoration: none; font-weight: bold; }
+        .forgot-pass { color: var(--primary); text-decoration: none; font-weight: bold; }
 
         .btn-login-new { width: 100%; padding: 12px; background: #1e5a2f; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
         .btn-login-new:hover { background: #154c27; }
