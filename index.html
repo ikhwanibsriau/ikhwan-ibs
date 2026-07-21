@@ -490,20 +490,19 @@
                 <div id="view-generic" class="view-section">
                     <div class="header-action">
                         <h2 id="view-title">Data</h2>
-                        <div>
-                            <button class="btn" onclick="openModal()"><i class="fas fa-plus"></i> Tambah</button>
+                        <div style="display: flex; gap: 15px; align-items: center;">
+                            <!-- Kotak Pencarian (Search Bar) -->
+                            <div style="position: relative;">
+                                <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
+                                <input type="text" id="searchInput" class="form-control" style="padding-left: 35px; width: 280px; border-radius: 8px; border: 1.5px solid #d1d5db;" placeholder="Cari Nama, NIS, Kamar, Kelas..." onkeyup="filterTable()">
+                            </div>
+                            
+                            <!-- Tombol Tambah -->
+                            <button class="btn" style="box-shadow: 0 4px 6px rgba(72,151,68,0.2);" onclick="openModal()">
+                                <i class="fas fa-plus"></i> Tambah
+                            </button>
                         </div>
                     </div>
-                    <div class="table-responsive">
-                        <table id="data-table">
-                            <thead id="data-table-head"></thead>
-                            <tbody id="data-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal -->
     <div id="genericModal" class="modal">
@@ -798,13 +797,12 @@
             }).catch(err => hideLoad());
         }
 
-        function renderTable() {
+        function renderTable(dataToRender = moduleData) {
             const head = document.getElementById('data-table-head');
             const body = document.getElementById('data-table-body');
             
             let headHTML = '<tr><th width="50" style="text-align:center;">NO</th>';
             
-            // Cek apakah skema menggunakan header kustom (tableHeaders) atau pakai nama kolom (cols)
             if (schemaDef.tableHeaders) {
                 schemaDef.tableHeaders.forEach(h => headHTML += `<th>${h.toUpperCase()}</th>`);
             } else {
@@ -815,22 +813,44 @@
             head.innerHTML = headHTML;
 
             let bodyHTML = '';
-            moduleData.forEach((row, index) => {
-                bodyHTML += '<tr>';
-                // Tambahkan nomor urut
-                bodyHTML += `<td style="text-align:center; font-weight:bold;">${index + 1}</td>`;
-                
-                schemaDef.cols.forEach(c => bodyHTML += `<td>${row[c] || '-'}</td>`);
-                bodyHTML += `
-                    <td style="text-align:center;">
-                        <button class="btn btn-warning" onclick="editData('${row.id}')"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-danger" onclick="deleteData('${row.id}')"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`;
-            });
+            
+            // Jika data kosong setelah difilter
+            if (dataToRender.length === 0) {
+                bodyHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:#6b7280; font-style:italic;">Oops, data yang dicari tidak ditemukan.</td></tr>`;
+            } else {
+                // Render baris data
+                dataToRender.forEach((row, index) => {
+                    bodyHTML += '<tr>';
+                    bodyHTML += `<td style="text-align:center; font-weight:bold;">${index + 1}</td>`;
+                    
+                    schemaDef.cols.forEach(c => bodyHTML += `<td>${row[c] || '-'}</td>`);
+                    bodyHTML += `
+                        <td style="text-align:center;">
+                            <button class="btn btn-warning" style="margin-right:4px;" onclick="editData('${row.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger" onclick="deleteData('${row.id}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
+            }
             body.innerHTML = bodyHTML;
         }
 
+        // Fungsi Pencarian Cerdas (Smart Search)
+        function filterTable() {
+            // Ambil kata kunci yang diketik user (ubah ke huruf kecil semua agar tidak sensitif huruf besar/kecil)
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            
+            // Saring data: Cek apakah kata kunci ada di kolom mana saja (Nama, NIS, Kamar, dll)
+            const filteredData = moduleData.filter(row => {
+                return Object.values(row).some(val => 
+                    String(val).toLowerCase().includes(keyword)
+                );
+            });
+            
+            // Tampilkan ulang tabel dengan data hasil saringan
+            renderTable(filteredData);
+        }
+        
         function openModal(id = null) {
             document.getElementById('genericModal').style.display = 'flex';
             const fieldsContainer = document.getElementById('form-fields');
