@@ -172,10 +172,16 @@
         .view-section { display: none; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        
+        /* -- AWAL PERUBAHAN CSS -- */
+        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px;}
-        th { background: var(--primary); color: white; }
+        th, td { padding: 12px 15px; text-align: left; font-size: 14px; }
+        /* Ubah warna header jadi hijau daun */
+        th { background: #459a4c; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        td { border-bottom: 1px solid #eee; }
+        tr:hover td { background-color: #f9fafb; }
+        /* -- AKHIR PERUBAHAN CSS -- */
         
         /* Loading Overlay */
         #loader { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index: 9999; justify-content:center; align-items:center; }
@@ -515,16 +521,33 @@
         const schemas = {
             santri: {
                 title: "Data Santri", table: "Santri",
+                
+                // Form Input Lengkap (17 Field)
                 fields: [
                     { name: 'id', label: 'ID', type: 'hidden' },
+                    { name: 'asrama', label: 'Asrama / Gedung', type: 'text', req: true },
+                    { name: 'pembina', label: 'Pembina Asrama', type: 'text', req: true },
                     { name: 'nis', label: 'NIS', type: 'text', req: true },
                     { name: 'nama', label: 'Nama Lengkap', type: 'text', req: true, full: true },
-                    { name: 'kelas', label: 'Kelas', type: 'select', options: ['7','8','9','10','11','12'] },
+                    { name: 'jenjang', label: 'Jenjang (1-6)', type: 'select', options: ['1','2','3','4','5','6'] },
+                    { name: 'kelas', label: 'Kelas', type: 'text' },
                     { name: 'kamar', label: 'Kamar', type: 'text' },
-                    { name: 'status', label: 'Status', type: 'select', options: ['Aktif','Nonaktif'] }
+                    { name: 'tmplahir', label: 'Tempat Lahir', type: 'text' },
+                    { name: 'tgllahir', label: 'Tanggal Lahir', type: 'date' },
+                    { name: 'jk', label: 'Jenis Kelamin', type: 'select', options: ['Laki-laki', 'Perempuan'] },
+                    { name: 'tahunmasuk', label: 'Tahun Masuk', type: 'number' },
+                    { name: 'status', label: 'Status', type: 'select', options: ['Aktif', 'Nonaktif', 'Lulus', 'Pindah'] },
+                    { name: 'alamat', label: 'Alamat Lengkap', type: 'text', full: true },
+                    { name: 'ayah', label: 'Nama Ayah', type: 'text' },
+                    { name: 'ibu', label: 'Nama Ibu', type: 'text' },
+                    { name: 'hp', label: 'No HP (Orang Tua)', type: 'text' }
                 ],
-                cols: ['nis', 'nama', 'kelas', 'kamar', 'status']
+                
+                // Tampilan Tabel (Sederhana)
+                tableHeaders: ['NIS', 'Gedung', 'Pembina', 'Nama', 'Jenjang', 'Kamar', 'Kelas', 'Status'],
+                cols: ['nis', 'asrama', 'pembina', 'nama', 'jenjang', 'kamar', 'kelas', 'status']
             },
+            
             pelanggaran: {
                 title: "Data Pelanggaran", table: "Pelanggaran",
                 fields: [
@@ -752,17 +775,27 @@
             const head = document.getElementById('data-table-head');
             const body = document.getElementById('data-table-body');
             
-            let headHTML = '<tr>';
-            schemaDef.cols.forEach(c => headHTML += `<th>${c.toUpperCase()}</th>`);
-            headHTML += '<th>AKSI</th></tr>';
+            let headHTML = '<tr><th width="50" style="text-align:center;">NO</th>';
+            
+            // Cek apakah skema menggunakan header kustom (tableHeaders) atau pakai nama kolom (cols)
+            if (schemaDef.tableHeaders) {
+                schemaDef.tableHeaders.forEach(h => headHTML += `<th>${h.toUpperCase()}</th>`);
+            } else {
+                schemaDef.cols.forEach(c => headHTML += `<th>${c.toUpperCase()}</th>`);
+            }
+            
+            headHTML += '<th style="text-align:center;">AKSI</th></tr>';
             head.innerHTML = headHTML;
 
             let bodyHTML = '';
-            moduleData.forEach(row => {
+            moduleData.forEach((row, index) => {
                 bodyHTML += '<tr>';
+                // Tambahkan nomor urut
+                bodyHTML += `<td style="text-align:center; font-weight:bold;">${index + 1}</td>`;
+                
                 schemaDef.cols.forEach(c => bodyHTML += `<td>${row[c] || '-'}</td>`);
                 bodyHTML += `
-                    <td>
+                    <td style="text-align:center;">
                         <button class="btn btn-warning" onclick="editData('${row.id}')"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-danger" onclick="deleteData('${row.id}')"><i class="fas fa-trash"></i></button>
                     </td>
