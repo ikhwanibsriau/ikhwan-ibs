@@ -19,14 +19,56 @@
         body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; }
         
         /* Auth Screen (Berdasarkan Referensi Gambar) */
-        #auth-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background-color: var(--primary); }
-        .login-box { background: #fff; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 420px; text-align: center; }
-        .login-box h2 { color: var(--primary); font-size: 24px; margin-bottom: 25px; line-height: 1.3; }
-        .form-control { width: 100%; padding: 12px 15px; margin: 10px 0 15px; border: 1px solid #ddd; border-radius: 4px; outline: none; font-size: 15px; }
-        .form-control:focus { border-color: var(--primary); }
-        .btn-login { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 16px; transition: 0.2s; margin-top: 10px; }
-        .btn-login:hover { background: var(--primary-hover); }
-        .login-footer { margin-top: 20px; font-size: 13px; color: #777; }
+        /* Auth Screen (Gaya Baru Modern) */
+        #auth-screen { 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            /* Background hijau tua dengan efek cahaya (radial) */
+            background: radial-gradient(circle at 15% 25%, #2b7042 0%, transparent 40%),
+                        radial-gradient(circle at 85% 85%, #2b7042 0%, transparent 40%),
+                        #154c27; 
+        }
+        
+        .login-box-new { 
+            background: #f0f4f1; /* Putih agak kehijauan/abu */
+            padding: 40px; 
+            border-radius: 20px; /* Sudut melengkung besar */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+            width: 100%; 
+            max-width: 420px; 
+        }
+
+        .login-header { text-align: center; margin-bottom: 25px; }
+        .login-header h2 { color: #1e5a2f; font-size: 22px; margin: 5px 0 0; line-height: 1.3; }
+        .login-header .subtitle { font-size: 13px; color: #555; margin-bottom: 12px; }
+        .login-header .badge { background: #d4e5d9; color: #1e5a2f; padding: 6px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 12px; color: #333; font-weight: bold; margin-bottom: 8px; }
+        
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 14px;}
+        .form-control-new { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; background: #fff; transition: 0.3s; }
+        .form-control-new:focus { border-color: #1e5a2f; box-shadow: 0 0 0 3px rgba(30,90,47,0.1); }
+        .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #888; cursor: pointer; }
+
+        .login-options { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 20px; }
+        .remember-me { color: #555; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .forgot-pass { color: #1e5a2f; text-decoration: none; font-weight: bold; }
+
+        .btn-login-new { width: 100%; padding: 12px; background: #1e5a2f; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .btn-login-new:hover { background: #154c27; }
+
+        .divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: #999; font-size: 11px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #ddd; }
+        .divider span { padding: 0 10px; }
+
+        .btn-sso { width: 100%; padding: 10px; background: #fff; color: #333; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-sso:hover { background: #f9f9f9; }
+
+        .login-footer-new { text-align: center; font-size: 10px; color: #777; margin-top: 25px; line-height: 1.6; }
         
         /* App Layout */
 #app-screen { display: none; height: 100vh; }
@@ -76,14 +118,51 @@
 
     <!-- Login Screen -->
     <div id="auth-screen">
-        <div class="login-box">
-            <h2>SISTEM MANAJEMEN SANTRI<br>(SMS)</h2>
+        <div class="login-box-new">
+            <div class="login-header">
+                <i class="fas fa-book-reader" style="font-size: 35px; color: #1e5a2f; margin-bottom: 10px;"></i>
+                <h2>SISTEM MANAJEMEN SANTRI<br>(SMS)</h2>
+                <div class="subtitle">Pondok Pesantren</div>
+                <span class="badge">Portal Administrasi & Pembinaan</span>
+            </div>
+
             <form id="loginForm" onsubmit="handleLogin(event)">
-                <input type="text" id="username" class="form-control" placeholder="Username" required>
-                <input type="password" id="password" class="form-control" placeholder="Password" required>
-                <button type="submit" class="btn-login">Masuk Aplikasi</button>
+                <div class="input-group">
+                    <label>Username</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="username" class="form-control-new" placeholder="Masukkan username" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" class="form-control-new" placeholder="Masukkan password" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePass()" id="eye-icon"></i>
+                    </div>
+                </div>
+
+                <div class="login-options">
+                    <label class="remember-me"><input type="checkbox"> Ingat saya</label>
+                    <a href="#" class="forgot-pass">Lupa password?</a>
+                </div>
+
+                <button type="submit" class="btn-login-new">LOGIN</button>
             </form>
-            <div class="login-footer">Versi 1.0.0 | Pondok Pesantren</div>
+
+            <div class="divider"><span>atau</span></div>
+
+            <button type="button" class="btn-sso" onclick="alert('Fitur SSO Google sedang dalam pengembangan')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="18"> Login dengan SSO Google
+            </button>
+
+            <div class="login-footer-new">
+                Hubungi admin sistem untuk login dengan SSO Google<br>
+                Version 1.0.0 (Build 2026.07.20)<br>
+                &copy; 2026 Pondok Pesantren. All rights reserved.
+            </div>
         </div>
     </div>
 
@@ -382,6 +461,22 @@
 
         function editData(id) { openModal(id); }
         function toggleSidebar() { document.querySelector('.sidebar').classList.toggle('collapsed'); }
+    
+        // Fungsi untuk Show/Hide Password
+        function togglePass() {
+            const passInput = document.getElementById('password');
+            const icon = document.getElementById('eye-icon');
+            
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash'); // Ganti jadi mata dicoret
+            } else {
+                passInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye'); // Ganti jadi mata normal
+            }
+        }
     </script>
 </body>
 </html>
