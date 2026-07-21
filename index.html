@@ -494,7 +494,8 @@
                             <!-- Kotak Pencarian (Search Bar) -->
                             <div style="position: relative;">
                                 <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af;"></i>
-                                <input type="text" id="searchInput" class="form-control" style="padding-left: 35px; width: 280px; border-radius: 8px; border: 1.5px solid #d1d5db;" placeholder="Cari Nama, NIS, Kamar..." onkeyup="filterTable()">
+                                <!-- Perhatikan: onkeyup sekarang jadi filterTable(true) -->
+                                <input type="text" id="searchInput" class="form-control" style="padding-left: 35px; width: 280px; border-radius: 8px; border: 1.5px solid #d1d5db;" placeholder="Cari Nama, NIS, Kamar..." onkeyup="filterTable(true)">
                             </div>
                             
                             <!-- Tombol Tambah (Hanya di Kanan Atas) -->
@@ -510,6 +511,12 @@
                             <thead id="data-table-head"></thead>
                             <tbody id="data-table-body"></tbody>
                         </table>
+                    </div>
+                    
+                    <!-- KONTROL PAGINATION (BARU) -->
+                    <div id="pagination-controls" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: 13px; color: #6b7280; display: none;">
+                        <span id="pagination-info">Menampilkan 0 data</span>
+                        <div id="pagination-buttons" style="display: flex; gap: 8px; align-items: center;"></div>
                     </div>
                 </div>
                 
@@ -547,6 +554,8 @@
         let moduleData = [];
         let schemaDef = {};
         let listNamaSantri = [];
+        let currentPage = 1;
+        const rowsPerPage = 20; // <-- Di sini kita membatasi 20 santri per halaman
 
         // Definisi Skema Tabel
         const schemas = {
@@ -809,29 +818,43 @@
         function renderTable(dataToRender = moduleData) {
             const head = document.getElementById('data-table-head');
             const body = document.getElementById('data-table-body');
+            const pagControls = document.getElementById('pagination-controls');
             
-            // Jaga-jaga kalau elemen HTML belum terbaca
             if (!head || !body) return; 
             
             let headHTML = '<tr><th width="50" style="text-align:center;">NO</th>';
-            
             if (schemaDef.tableHeaders) {
                 schemaDef.tableHeaders.forEach(h => headHTML += `<th>${h.toUpperCase()}</th>`);
             } else {
                 schemaDef.cols.forEach(c => headHTML += `<th>${c.toUpperCase()}</th>`);
             }
-            
             headHTML += '<th style="text-align:center;">AKSI</th></tr>';
             head.innerHTML = headHTML;
 
+            // --- LOGIKA PAGINATION (Batas 20 Data) ---
+            const totalData = dataToRender.length;
+            const totalPages = Math.ceil(totalData / rowsPerPage);
+            
+            // Jaga-jaga agar halaman tidak kebablasan
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+            
+            // Potong data dari ke-berapa sampai ke-berapa
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const paginatedData = dataToRender.slice(startIndex, endIndex);
+
             let bodyHTML = '';
             
-            if (dataToRender.length === 0) {
+            if (totalData === 0) {
                 bodyHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:#6b7280; font-style:italic;">Oops, data yang dicari tidak ditemukan.</td></tr>`;
+                pagControls.style.display = 'none'; // Sembunyikan navigasi jika data kosong
             } else {
-                dataToRender.forEach((row, index) => {
+                pagControls.style.display = 'flex'; // Munculkan navigasi
+                paginatedData.forEach((row, index) => {
                     bodyHTML += '<tr>';
-                    bodyHTML += `<td style="text-align:center; font-weight:bold;">${index + 1}</td>`;
+                    // Nomor urut menyesuaikan halaman (contoh: hal 2 mulai dari 21)
+                    bodyHTML += `<td style="text-align:center; font-weight:bold;">${startIndex + index + 1}</td>`;
                     
                     schemaDef.cols.forEach(c => bodyHTML += `<td>${row[c] || '-'}</td>`);
                     bodyHTML += `
@@ -843,18 +866,49 @@
                 });
             }
             body.innerHTML = bodyHTML;
+            
+            // Render tombol prev/next
+            renderPagination(totalData, totalPages);
         }
 
-        // Fungsi Pencarian Cerdas (Smart Search)
-        function filterTable() {
-            const keyword = document.getElementById('searchInput').value.toLowerCase();
+        // FUNGSI MEMBUAT TOMBOL NAVIGASI HALAMAN
+        function renderPagination(totalData, totalPages) {
+            const info = document.getElementById('pagination-info');
+            const buttons = document.getElementById('pagination-buttons');
             
+            const start = ((currentPage - 1) * rowsPerPage) + 1;
+            const end = Math.min(currentPage * rowsPerPage, totalData);
+            info.innerText = `Menampilkan ${start} - ${end} dari total ${totalData} santri`;
+            
+            let btnHTML = '';
+            // Tombol Prev (<)
+            btnHTML += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} style="padding: 6px 12px; border: 1px solid #d1d5db; background: ${currentPage === 1 ? '#f3f4f6' : 'white'}; border-radius: 6px; color: ${currentPage === 1 ? '#9ca3af' : '#374151'}; cursor: ${currentPage === 1 ? 'not-allowed' : 'pointer'};"> < Prev </button>`;
+            
+            // Info Halaman
+            btnHTML += `<span style="padding: 0 10px; font-weight: 600; color: var(--primary);">Hal ${currentPage} / ${totalPages}</span>`;
+            
+            // Tombol Next (>)
+            btnHTML += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} style="padding: 6px 12px; border: 1px solid #d1d5db; background: ${currentPage === totalPages ? '#f3f4f6' : 'white'}; border-radius: 6px; color: ${currentPage === totalPages ? '#9ca3af' : '#374151'}; cursor: ${currentPage === totalPages ? 'not-allowed' : 'pointer'};"> Next > </button>`;
+            
+            buttons.innerHTML = btnHTML;
+        }
+
+        // FUNGSI GANTI HALAMAN
+        function changePage(newPage) {
+            currentPage = newPage;
+            filterTable(false); // false = jangan reset ke halaman 1
+        }
+
+        // FUNGSI PENCARIAN (Smart Search)
+        function filterTable(resetPage = true) {
+            if (resetPage) currentPage = 1; // Kembali ke halaman 1 saat user mulai mengetik di kotak pencarian
+            
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
             const filteredData = moduleData.filter(row => {
                 return Object.values(row).some(val => 
                     String(val).toLowerCase().includes(keyword)
                 );
             });
-            
             renderTable(filteredData);
         }
         
