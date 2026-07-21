@@ -503,6 +503,22 @@
                             </button>
                         </div>
                     </div>
+                    
+                    <!-- Ini bagian tabel yang sepertinya tidak sengaja terhapus tadi bos -->
+                    <div class="table-responsive">
+                        <table id="data-table">
+                            <thead id="data-table-head"></thead>
+                            <tbody id="data-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+                            
+                            <!-- Tombol Tambah -->
+                            <button class="btn" style="box-shadow: 0 4px 6px rgba(72,151,68,0.2);" onclick="openModal()">
+                                <i class="fas fa-plus"></i> Tambah
+                            </button>
+                        </div>
+                    </div>
 
     <!-- Modal -->
     <div id="genericModal" class="modal">
@@ -801,6 +817,9 @@
             const head = document.getElementById('data-table-head');
             const body = document.getElementById('data-table-body');
             
+            // Jaga-jaga kalau elemen HTML belum terbaca
+            if (!head || !body) return; 
+            
             let headHTML = '<tr><th width="50" style="text-align:center;">NO</th>';
             
             if (schemaDef.tableHeaders) {
@@ -814,11 +833,9 @@
 
             let bodyHTML = '';
             
-            // Jika data kosong setelah difilter
             if (dataToRender.length === 0) {
                 bodyHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:#6b7280; font-style:italic;">Oops, data yang dicari tidak ditemukan.</td></tr>`;
             } else {
-                // Render baris data
                 dataToRender.forEach((row, index) => {
                     bodyHTML += '<tr>';
                     bodyHTML += `<td style="text-align:center; font-weight:bold;">${index + 1}</td>`;
@@ -837,17 +854,14 @@
 
         // Fungsi Pencarian Cerdas (Smart Search)
         function filterTable() {
-            // Ambil kata kunci yang diketik user (ubah ke huruf kecil semua agar tidak sensitif huruf besar/kecil)
             const keyword = document.getElementById('searchInput').value.toLowerCase();
             
-            // Saring data: Cek apakah kata kunci ada di kolom mana saja (Nama, NIS, Kamar, dll)
             const filteredData = moduleData.filter(row => {
                 return Object.values(row).some(val => 
                     String(val).toLowerCase().includes(keyword)
                 );
             });
             
-            // Tampilkan ulang tabel dengan data hasil saringan
             renderTable(filteredData);
         }
         
