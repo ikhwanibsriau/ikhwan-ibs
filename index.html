@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTEM MANAJEMEN SANTRI (SMS)</title>
+    <!-- FontAwesome, ChartJS, & SweetAlert2 -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         :root {
             --primary: #489744;
@@ -17,43 +19,73 @@
             --text-dark: #1f2937;
             --sidebar-width: 250px;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; }
         
-        #auth-screen { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle at 15% 25%, #2A5328 0%, transparent 40%), radial-gradient(circle at 85% 85%, #489744 0%, transparent 40%), #0E250E; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text-dark); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+        
+        #auth-screen { 
+            height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: radial-gradient(circle at 15% 25%, #2A5328 0%, transparent 40%), 
+                        radial-gradient(circle at 85% 85%, #489744 0%, transparent 40%), #0E250E; 
+        }
         .login-box-new { background: #ffffff; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); width: 100%; max-width: 420px; }
         .login-header { text-align: center; margin-bottom: 25px; }
-        .login-header h2 { color: var(--primary-dark); font-size: 22px; margin: 5px 0 0; }
+        .login-header h2 { color: var(--primary-dark); font-size: 22px; margin: 5px 0 0; font-weight: 700; }
         .input-group { margin-bottom: 15px; }
-        .form-control-new { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
-        .btn-login-new { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; }
+        .form-control-new { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; transition: border 0.3s; }
+        .form-control-new:focus { border-color: var(--primary); }
+        .btn-login-new { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 16px; transition: background 0.3s; }
+        .btn-login-new:hover { background: var(--primary-hover); }
         
         #app-screen { display: none; height: 100vh; overflow: hidden; }
-        .sidebar { width: var(--sidebar-width); background: var(--primary-dark); color: white; display: flex; flex-direction: column; }
-        .sidebar.collapsed { width: 85px; }
-        .nav-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; color: #a7cfa5; }
-        .nav-item.active { background: var(--bg); color: var(--primary); font-weight: bold; }
+        .sidebar { width: var(--sidebar-width); background: var(--primary-dark); color: white; display: flex; flex-direction: column; transition: width 0.3s; }
+        .sidebar.collapsed { width: 70px; }
+        .sidebar.collapsed .nav-item span { display: none; }
+        .sidebar.collapsed .nav-item { justify-content: center; padding: 15px; }
+        
+        .nav-menu { margin-top: 20px; }
+        .nav-item { padding: 15px 20px; cursor: pointer; display: flex; align-items: center; color: #a7cfa5; transition: all 0.3s; gap: 15px; }
+        .nav-item:hover { background: rgba(255,255,255,0.1); color: white; }
+        .nav-item.active { background: var(--bg); color: var(--primary); font-weight: bold; border-radius: 20px 0 0 20px; margin-left: 10px; }
         
         .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .topbar { height: 70px; background: #ffffff; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .content-area { flex: 1; padding: 20px; overflow-y: auto; background-color: var(--bg); }
+        .topbar { height: 70px; background: #ffffff; display: flex; justify-content: space-between; align-items: center; padding: 0 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 10; transition: background-color 0.3s; }
+        .topbar i { font-size: 20px; cursor: pointer; color: var(--text-dark); transition: color 0.3s; }
+        .topbar-right { display: flex; gap: 20px; align-items: center; }
         
+        .content-area { flex: 1; padding: 20px; overflow-y: auto; background-color: var(--bg); transition: background-color 0.3s; }
+        .view-section { animation: fadeIn 0.3s ease-in; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Spinner Animasi */
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
         /* Dark Mode */
-        body.dark-mode { --bg: #111827; --text-dark: #f3f4f6; color: var(--text-dark); background-color: var(--bg); }
-        body.dark-mode .topbar, body.dark-mode .dash-card { background: #1f2937; color: #f3f4f6; border: 1px solid #374151; }
-        body.dark-mode .content-area { background-color: var(--bg); }
+        body.dark-mode { --bg: #111827; --text-dark: #f3f4f6; }
+        body.dark-mode .topbar { background: #1f2937; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        body.dark-mode .topbar i { color: #f3f4f6; }
+        body.dark-mode .login-box-new { background: #1f2937; color: white; }
+        body.dark-mode .login-header h2 { color: var(--primary-light); }
+        body.dark-mode .form-control-new { background: #374151; border-color: #4b5563; color: white; }
     </style>
 </head>
 <body>
+    <!-- Loader Screen -->
     <div id="loader" style="display:none; position:fixed; z-index:9999; width:100%; height:100%; background:rgba(255,255,255,0.8); justify-content:center; align-items:center;">
         <div class="spinner"></div>
     </div>
 
-    <!-- Auth -->
+    <!-- Auth (Login Screen) -->
     <div id="auth-screen">
         <div class="login-box-new">
             <div class="login-header">
                 <h2>SISTEM MANAJEMEN SANTRI</h2>
+                <p style="color: gray; font-size: 14px; margin-top: 5px;">Silakan login untuk melanjutkan</p>
             </div>
             <form onsubmit="handleLogin(event)">
                 <div class="input-group">
@@ -62,62 +94,106 @@
                 <div class="input-group">
                     <input type="password" id="password" class="form-control-new" placeholder="Password" required>
                 </div>
-                <button type="submit" class="btn-login-new">LOGIN</button>
+                <button type="submit" class="btn-login-new">LOGIN <i class="fas fa-sign-in-alt ml-2"></i></button>
             </form>
         </div>
     </div>
 
-    <!-- App -->
+    <!-- App (Dashboard Screen) -->
     <div id="app-screen">
         <div class="sidebar" id="sidebar">
+            <div style="padding: 20px; font-weight: bold; font-size: 1.2rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <i class="fas fa-mosque"></i> <span class="sidebar-title">SMS Web</span>
+            </div>
             <div class="nav-menu">
-                <div class="nav-item active" onclick="navigate('dashboard')"><i class="fas fa-chart-line"></i> <span>Dashboard</span></div>
-                <div class="nav-item" onclick="navigate('santri')"><i class="fas fa-users"></i> <span>Data Santri</span></div>
+                <div class="nav-item active" onclick="navigate('dashboard', this)"><i class="fas fa-chart-line"></i> <span>Dashboard</span></div>
+                <div class="nav-item" onclick="navigate('santri', this)"><i class="fas fa-users"></i> <span>Data Santri</span></div>
             </div>
         </div>
         <div class="main-content">
             <div class="topbar">
-                <i class="fas fa-bars" onclick="document.getElementById('sidebar').classList.toggle('collapsed')"></i>
-                <button id="darkModeBtn" onclick="toggleDarkMode()"><i class="far fa-moon"></i></button>
+                <i class="fas fa-bars" onclick="toggleSidebar()"></i>
+                <div class="topbar-right">
+                    <i id="darkModeBtn" class="far fa-moon" onclick="toggleDarkMode()" title="Ganti Tema"></i>
+                    <i class="fas fa-sign-out-alt" style="color: #ef4444;" onclick="handleLogout()" title="Keluar"></i>
+                </div>
             </div>
             <div class="content-area">
-                <div id="view-dashboard" class="view-section">Dashboard Aktif</div>
-                <div id="view-generic" class="view-section" style="display:none;">Data View</div>
+                <div id="view-dashboard" class="view-section">
+                    <h2 style="margin-bottom: 20px;">Selamat Datang di Dashboard</h2>
+                    <p>Ringkasan data manajemen santri akan tampil di sini.</p>
+                </div>
+                <div id="view-generic" class="view-section" style="display:none;">
+                    <h2 style="margin-bottom: 20px;">Data Santri</h2>
+                    <p>Tabel dan manajemen data santri.</p>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby007mXt-2sptjAsCgtEsMGlZMMytRVAWzOM87eopYdiyp0Qx5obG0D9IZ5eIUzQMQg/exec";
+        let currentUser = null; // PERBAIKAN: Mendeklarasikan variabel currentUser
 
-       window.onload = () => {
+        window.onload = () => {
             const savedUser = localStorage.getItem('sim_user');
             if(savedUser) { 
                 currentUser = JSON.parse(savedUser);
                 setupApp(); 
             } else {
-                // Jika belum login, pastikan screen login yang muncul
                 document.getElementById('auth-screen').style.display = 'flex';
                 document.getElementById('app-screen').style.display = 'none';
             }
+            
+            // Cek tema yang tersimpan
+            if(localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkModeBtn').className = 'fas fa-sun';
+            }
         };
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
-            fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                body: JSON.stringify({ action: 'login', username: document.getElementById('username').value, password: document.getElementById('password').value })
-            })
-            .then(res => res.json())
-            .then(res => {
+            
+            // PERBAIKAN: Tampilkan loader saat memproses login
+            document.getElementById('loader').style.display = 'flex';
+            const usernameInput = document.getElementById('username').value;
+            const passwordInput = document.getElementById('password').value;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ 
+                        action: 'login', 
+                        username: usernameInput, 
+                        password: passwordInput 
+                    })
+                });
+                
+                const res = await response.json();
+                
                 if(res.success) {
                     localStorage.setItem('sim_user', JSON.stringify(res.user));
-                    window.location.reload();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Login Berhasil',
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 } else {
-                    Swal.fire('Gagal', res.message, 'error');
+                    Swal.fire('Gagal Login', res.message || 'Username atau Password salah!', 'error');
                 }
-            });
+            } catch (error) {
+                console.error("Fetch error:", error);
+                Swal.fire('Koneksi Gagal', 'Terjadi kesalahan saat menghubungi server.', 'error');
+            } finally {
+                // Sembunyikan loader setelah proses selesai (baik sukses maupun gagal)
+                document.getElementById('loader').style.display = 'none';
+            }
         }
 
         function setupApp() {
@@ -125,16 +201,66 @@
             document.getElementById('app-screen').style.display = 'flex';
         }
 
-        function navigate(view) {
+        function navigate(view, element) {
+            // Sembunyikan semua section
             document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
-            if(view === 'dashboard') document.getElementById('view-dashboard').style.display = 'block';
-            else document.getElementById('view-generic').style.display = 'block';
+            
+            // Tampilkan section yang dipilih
+            if(view === 'dashboard') {
+                document.getElementById('view-dashboard').style.display = 'block';
+            } else {
+                document.getElementById('view-generic').style.display = 'block';
+            }
+            
+            // Pindahkan class active ke menu yang diklik
+            if(element) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
+            }
+        }
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+            
+            const title = document.querySelector('.sidebar-title');
+            if(sidebar.classList.contains('collapsed')) {
+                title.style.display = 'none';
+            } else {
+                title.style.display = 'inline';
+            }
         }
 
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
-            const icon = document.querySelector('#darkModeBtn i');
-            icon.className = document.body.classList.contains('dark-mode') ? 'fas fa-sun' : 'far fa-moon';
+            const icon = document.getElementById('darkModeBtn');
+            
+            if(document.body.classList.contains('dark-mode')) {
+                icon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                icon.className = 'far fa-moon';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+        
+        // FITUR BARU: Menambahkan fungsi Logout
+        function handleLogout() {
+            Swal.fire({
+                title: 'Apakah Anda yakin?',
+                text: "Anda akan keluar dari sistem.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#489744',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Ya, Keluar!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem('sim_user');
+                    window.location.reload();
+                }
+            })
         }
     </script>
 </body>
