@@ -28,9 +28,7 @@
             height: 100dvh;
         }
 
-        /* =========================================
-           LOGIN SCREEN
-           ========================================= */
+        /* LOGIN SCREEN */
         #auth-screen { 
             height: 100vh; 
             height: 100dvh; 
@@ -73,9 +71,7 @@
         .btn-sso:hover { background: #f9f9f9; }
         .login-footer-new { text-align: center; font-size: 10px; color: #777; margin-top: 25px; line-height: 1.6; }
 
-        /* =========================================
-           APP LAYOUT
-           ========================================= */
+        /* APP LAYOUT */
         #app-screen { 
             display: none; 
             height: 100vh; 
@@ -83,8 +79,6 @@
             overflow: hidden; 
             position: relative;
         }
-        
-        /* Overlay untuk mobile sidebar */
         .sidebar-overlay {
             display: none;
             position: fixed;
@@ -98,8 +92,6 @@
         .sidebar-overlay.active {
             display: block;
         }
-
-        /* ===== SIDEBAR ===== */
         .sidebar { 
             width: var(--sidebar-width); 
             background: var(--primary-dark); 
@@ -167,7 +159,6 @@
         }
         .admin-only { display: none; }
 
-        /* ===== MAIN CONTENT ===== */
         .main-content { 
             flex: 1; 
             display: flex; 
@@ -199,12 +190,10 @@
         td { border-bottom: 1px solid #eee; }
         tr:hover td { background-color: #f9fafb; }
         
-        /* Loader */
         #loader { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index: 9999; justify-content:center; align-items:center; }
         .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Modal */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; }
         .modal-content { background: white; padding: 30px; border-radius: 16px; width: 95%; max-width: 750px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); position: relative; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 15px; margin-bottom: 25px; }
@@ -221,9 +210,7 @@
         .modal-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #f3f4f6; display: flex; justify-content: flex-end; gap: 12px; }
         .modal-footer .btn { padding: 10px 24px; font-size: 14px; border-radius: 8px; font-weight: 600; }
 
-        /* =========================================
-           DASHBOARD
-           ========================================= */
+        /* DASHBOARD */
         .dashboard-container { display: flex; flex-direction: column; gap: 20px; }
         .dash-banner {
             background: linear-gradient(to right, #244423 40%, rgba(36, 68, 35, 0.1) 100%), 
@@ -252,12 +239,11 @@
         .dash-card .badge-green { background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
         .dash-grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .dash-grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        /* Grid 3 kolom untuk grafik */
-.dash-grid-3col {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-}
+        .dash-grid-3col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
         .dash-panel { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .dash-panel h3 { font-size: 16px; margin-bottom: 20px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eee; }
@@ -268,9 +254,6 @@
         .status-danger { background: #ffebee; color: #c62828; }
         .status-warning { background: #fff8e1; color: #f57f17; }
 
-        /* =========================================
-           TOPBAR
-           ========================================= */
         .topbar-right { display: flex; align-items: center; gap: 15px; }
         .icon-btn { background: transparent; border: none; font-size: 20px; color: var(--text-dark); cursor: pointer; transition: 0.2s; position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 12px; }
         .icon-btn:hover { color: var(--primary); }
@@ -280,9 +263,7 @@
         .user-profile { width: 40px; height: 40px; background: #4f46e5; color: white; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); }
         .user-profile:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4); }
 
-        /* =========================================
-           DARK MODE
-           ========================================= */
+        /* DARK MODE */
         body.dark-mode {
             --bg: #111827;
             --text-dark: #f3f4f6;
@@ -303,15 +284,11 @@
         body.dark-mode .dash-card .value { color: white; }
         body.dark-mode .dash-panel h3 { color: white; border-color: #374151; }
 
-        /* =========================================
-           RESPONSIVE (Mobile, Tablet, iPhone)
-           ========================================= */
+        /* ================= RESPONSIVE ================= */
         @media (max-width: 768px) {
-    /* ... kode lain ... */
-    .dash-grid-3col {
-        grid-template-columns: 1fr;
-    }
-}
+            #app-screen {
+                flex-direction: column;
+            }
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -342,6 +319,9 @@
                 grid-template-columns: 1fr;
             }
             .dash-grid-half {
+                grid-template-columns: 1fr;
+            }
+            .dash-grid-3col {
                 grid-template-columns: 1fr;
             }
             .dash-banner {
@@ -430,14 +410,10 @@
 </head>
 <body>
 
-    <!-- Overlay untuk mobile sidebar -->
     <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeMobileSidebar()"></div>
-
     <div id="loader"><div class="spinner"></div></div>
 
-    <!-- =========================================
-         LOGIN SCREEN
-         ========================================= -->
+    <!-- LOGIN SCREEN -->
     <div id="auth-screen">
         <div class="login-box-new">
             <div class="login-header">
@@ -446,7 +422,6 @@
                 <div class="subtitle">Pembinaan Santri Putra</div>
                 <span class="badge">Administrasi & Pembinaan Santri</span>
             </div>
-
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="input-group">
                     <label>Username</label>
@@ -455,7 +430,6 @@
                         <input type="text" id="username" class="form-control-new" placeholder="Masukkan username" required>
                     </div>
                 </div>
-
                 <div class="input-group">
                     <label>Password</label>
                     <div class="input-wrapper">
@@ -464,21 +438,16 @@
                         <i class="fas fa-eye toggle-password" onclick="togglePass()" id="eye-icon"></i>
                     </div>
                 </div>
-
                 <div class="login-options">
                     <label class="remember-me"><input type="checkbox"> Ingat saya</label>
                     <a href="#" class="forgot-pass">Lupa password?</a>
                 </div>
-
                 <button type="submit" class="btn-login-new">LOGIN</button>
             </form>
-
             <div class="divider"><span>atau</span></div>
-
             <button type="button" class="btn-sso" onclick="alert('Fitur SSO Google sedang dalam pengembangan')">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="18"> Login dengan SSO Google
             </button>
-
             <div class="login-footer-new">
                 Hubungi admin sistem untuk login dengan SSO Google<br>
                 Version 1.0.0 <br>
@@ -487,11 +456,8 @@
         </div>
     </div>
 
-    <!-- =========================================
-         MAIN APP
-         ========================================= -->
+    <!-- MAIN APP -->
     <div id="app-screen">
-        <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <i class="fas fa-mosque sidebar-logo-icon"></i>
@@ -536,68 +502,51 @@
             <div class="content-area" id="content-area">
                 <!-- Dashboard View -->
                 <div id="view-dashboard" class="view-section" style="display: block;">
-    <div class="dashboard-container">
-        <!-- Banner -->
-        <div class="dash-banner">
-            <div style="max-width: 65%;">
-                <h2>Ahlan wa Sahlan, <span id="dash-nama">Admin</span>!</h2>
-                <p>Berikut ringkasan data pondok pesantren hari ini.</p>
-            </div>
-        </div>
-
-        <!-- Card Status Santri (5 card) -->
-        <div class="dash-cards-row" id="status-santri-cards">
-            <!-- Diisi oleh JS -->
-        </div>
-
-        <!-- Card Izin & Sakit -->
-        <div class="dash-cards-row" id="izin-sakit-cards" style="margin-top: 0;">
-            <!-- Diisi oleh JS -->
-        </div>
-
-        <!-- Grafik Pelanggaran Bulanan & Statistik Cepat -->
-        <div class="dash-grid-2">
-            <div class="dash-panel">
-                <h3>Grafik Pelanggaran Bulanan</h3>
-                <canvas id="chartPelanggaranBaru" height="100"></canvas>
-            </div>
-            <div class="dash-panel">
-                <h3>Statistik Cepat Bulan Ini</h3>
-                <div id="stat-cepat-container">
-                    <!-- Progress bar akan diisi JS -->
+                    <div class="dashboard-container">
+                        <div class="dash-banner">
+                            <div style="max-width: 65%;">
+                                <h2>Ahlan wa Sahlan, <span id="dash-nama">Admin</span>!</h2>
+                                <p>Berikut ringkasan data pondok pesantren hari ini.</p>
+                            </div>
+                        </div>
+                        <div class="dash-cards-row" id="status-santri-cards"></div>
+                        <div class="dash-cards-row" id="izin-sakit-cards" style="margin-top: 0;"></div>
+                        <div class="dash-grid-2">
+                            <div class="dash-panel">
+                                <h3>Grafik Pelanggaran Bulanan</h3>
+                                <canvas id="chartPelanggaranBaru" height="100"></canvas>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Statistik Cepat Bulan Ini</h3>
+                                <div id="stat-cepat-container"></div>
+                            </div>
+                        </div>
+                        <div class="dash-grid-3col">
+                            <div class="dash-panel">
+                                <h3>Jumlah Santri per Kamar</h3>
+                                <canvas id="chartPerKamar" height="150"></canvas>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Jumlah Santri per Kelas</h3>
+                                <canvas id="chartPerKelas" height="150"></canvas>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Jumlah Santri per Gedung</h3>
+                                <canvas id="chartPerGedung" height="150"></canvas>
+                            </div>
+                        </div>
+                        <div class="dash-grid-half">
+                            <div class="dash-panel">
+                                <h3>5 Pelanggaran Terbaru</h3>
+                                <div id="list-pelanggaran-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Santri Sedang Izin/Sakit</h3>
+                                <div id="list-izin-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Grafik Santri per Kamar, Kelas, Gedung -->
-        <div class="dash-grid-3col">
-            <div class="dash-panel">
-                <h3>Jumlah Santri per Kamar</h3>
-                <canvas id="chartPerKamar" height="150"></canvas>
-            </div>
-            <div class="dash-panel">
-                <h3>Jumlah Santri per Kelas</h3>
-                <canvas id="chartPerKelas" height="150"></canvas>
-            </div>
-            <div class="dash-panel">
-                <h3>Jumlah Santri per Gedung</h3>
-                <canvas id="chartPerGedung" height="150"></canvas>
-            </div>
-        </div>
-
-        <!-- 5 Pelanggaran Terbaru & Santri Izin/Sakit -->
-        <div class="dash-grid-half">
-            <div class="dash-panel">
-                <h3>5 Pelanggaran Terbaru</h3>
-                <div id="list-pelanggaran-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
-            </div>
-            <div class="dash-panel">
-                <h3>Santri Sedang Izin/Sakit</h3>
-                <div id="list-izin-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
-            </div>
-        </div>
-    </div>
-</div>
 
                 <!-- Generic View -->
                 <div id="view-generic" class="view-section">
@@ -649,7 +598,6 @@
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycby007mXt-2sptjAsCgtEsMGlZMMytRVAWzOM87eopYdiyp0Qx5obG0D9IZ5eIUzQMQg/exec"; 
 
-        // State
         let currentUser = null;
         let currentModule = '';
         let moduleData = [];
@@ -658,7 +606,6 @@
         let currentPage = 1;
         const rowsPerPage = 20;
 
-        // Schema
         const schemas = {
             santri: {
                 title: "Data Santri", table: "Santri",
@@ -675,7 +622,7 @@
                     { name: 'tgllahir', label: 'Tanggal Lahir', type: 'date' },
                     { name: 'jk', label: 'Jenis Kelamin', type: 'select', options: ['Laki-laki', 'Perempuan'] },
                     { name: 'tahunmasuk', label: 'Tahun Masuk', type: 'number' },
-                    { name: 'status', label: 'Status', type: 'select', options: ['Aktif', 'Nonaktif', 'Lulus', 'Pindah'] },
+                    { name: 'status', label: 'Status', type: 'select', options: ['Aktif', 'Nonaktif', 'Lulus', 'Pindah', 'Keluar'] },
                     { name: 'alamat', label: 'Alamat Lengkap', type: 'text', full: true },
                     { name: 'ayah', label: 'Nama Ayah', type: 'text' },
                     { name: 'ibu', label: 'Nama Ibu', type: 'text' },
@@ -718,7 +665,6 @@
             }
         }
 
-        // Cek session saat load
         window.onload = () => {
             const savedUser = localStorage.getItem('sim_user');
             if(savedUser) {
@@ -811,7 +757,6 @@
             }
         }
 
-        // Navigasi dengan event parameter
         function navigate(view, evt) {
             document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -824,7 +769,6 @@
                     if (onclick && onclick.includes(`'${view}'`)) item.classList.add('active');
                 });
             }
-
             if(view === 'dashboard') {
                 document.getElementById('view-dashboard').style.display = 'block';
                 loadDashboard();
@@ -835,24 +779,33 @@
                 document.getElementById('view-title').innerText = schemaDef.title;
                 loadTableData();
             }
-
-            // Tutup sidebar mobile setelah navigasi
             if (window.innerWidth <= 768) {
                 closeMobileSidebar();
             }
         }
 
+        // ============ DASHBOARD ============
         function loadDashboard() {
-    showLoad();
-    if(currentUser) document.getElementById('dash-nama').innerText = currentUser.nama;
+            showLoad();
+            if(currentUser) document.getElementById('dash-nama').innerText = currentUser.nama;
+            apiCall({ action: 'getDashboardStats' })
+            .then(res => {
+                hideLoad();
+                if(res.success) {
+                    renderDashboardData(res.data);
+                } else {
+                    renderDummyDashboard();
+                }
+            })
+            .catch(err => {
+                hideLoad();
+                console.error(err);
+                renderDummyDashboard();
+            });
+        }
 
-    apiCall({ action: 'getDashboardStats' })
-    .then(res => {
-        hideLoad();
-        if(res.success) {
-            const d = res.data;
-
-            // --- 1. Card Status Santri ---
+        function renderDashboardData(d) {
+            // Status Santri
             const statusData = [
                 { title: 'Aktif', value: d.totAktif || 0, icon: 'fa-user-check', color: '#489744' },
                 { title: 'Nonaktif', value: d.totNonaktif || 0, icon: 'fa-user-times', color: '#e53935' },
@@ -860,18 +813,16 @@
                 { title: 'Pindah', value: d.totPindah || 0, icon: 'fa-exchange-alt', color: '#ffb300' },
                 { title: 'Keluar', value: d.totKeluar || 0, icon: 'fa-door-open', color: '#8e24aa' }
             ];
-            let statusCardsHTML = '';
+            let html = '';
             statusData.forEach(item => {
-                statusCardsHTML += `
-                    <div class="dash-card" style="border-left: 4px solid ${item.color};">
-                        <div class="title"><i class="fas ${item.icon}" style="color:${item.color}; margin-right:5px;"></i> ${item.title}</div>
-                        <div class="value">${item.value} Santri</div>
-                    </div>
-                `;
+                html += `<div class="dash-card" style="border-left: 4px solid ${item.color};">
+                    <div class="title"><i class="fas ${item.icon}" style="color:${item.color}; margin-right:5px;"></i> ${item.title}</div>
+                    <div class="value">${item.value} Santri</div>
+                </div>`;
             });
-            document.getElementById('status-santri-cards').innerHTML = statusCardsHTML;
+            document.getElementById('status-santri-cards').innerHTML = html;
 
-            // --- 2. Card Izin & Sakit ---
+            // Izin & Sakit
             document.getElementById('izin-sakit-cards').innerHTML = `
                 <div class="dash-card" style="border-left: 4px solid #ff9800;">
                     <div class="title"><i class="fas fa-calendar-alt" style="color:#ff9800;"></i> Santri Sedang Izin</div>
@@ -883,147 +834,85 @@
                 </div>
             `;
 
-            // --- 3. Grafik Pelanggaran ---
+            // Grafik Pelanggaran
             if(window.chartPelanggaran) window.chartPelanggaran.destroy();
             const ctxPel = document.getElementById('chartPelanggaranBaru').getContext('2d');
             window.chartPelanggaran = new Chart(ctxPel, {
                 type: 'bar',
                 data: {
-                    labels: d.chartPelLabels || ['Jan','Feb','Mar','Apr','Mei','Jun'],
-                    datasets: [{
-                        label: 'Pelanggaran',
-                        data: d.chartPelData || [5,8,4,9,6,7],
-                        backgroundColor: '#489744',
-                        borderRadius: 5
-                    }]
+                    labels: d.chartPelLabels || [],
+                    datasets: [{ label: 'Pelanggaran', data: d.chartPelData || [], backgroundColor: '#489744', borderRadius: 5 }]
                 },
                 options: { responsive: true, plugins: { legend: { display: false } } }
             });
 
-            // --- 4. Statistik Cepat ---
-            const persenAman = d.persenAman || 85;
-            const persenPerhatian = d.persenPerhatian || 10;
-            const persenPembinaan = d.persenPembinaan || 5;
+            // Statistik Cepat
+            const aman = d.persenAman || 0, perhatian = d.persenPerhatian || 0, pembinaan = d.persenPembinaan || 0;
             document.getElementById('stat-cepat-container').innerHTML = `
                 <div style="margin-bottom:15px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Aman (0-19 Poin)</span> <strong>${persenAman}%</strong></div>
-                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#4caf50; width:${persenAman}%; height:100%; border-radius:5px;"></div></div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Aman (0-19)</span> <strong>${aman}%</strong></div>
+                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#4caf50; width:${aman}%; height:100%; border-radius:5px;"></div></div>
                 </div>
                 <div style="margin-bottom:15px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Perhatian (20-49)</span> <strong>${persenPerhatian}%</strong></div>
-                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#ffb300; width:${persenPerhatian}%; height:100%; border-radius:5px;"></div></div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Perhatian (20-49)</span> <strong>${perhatian}%</strong></div>
+                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#ffb300; width:${perhatian}%; height:100%; border-radius:5px;"></div></div>
                 </div>
                 <div style="margin-bottom:15px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Pembinaan (>50)</span> <strong>${persenPembinaan}%</strong></div>
-                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#e53935; width:${persenPembinaan}%; height:100%; border-radius:5px;"></div></div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Pembinaan (>50)</span> <strong>${pembinaan}%</strong></div>
+                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#e53935; width:${pembinaan}%; height:100%; border-radius:5px;"></div></div>
                 </div>
             `;
 
-            // --- 5. Grafik Santri per Kamar ---
+            // Grafik Kamar
             if(window.chartKamar) window.chartKamar.destroy();
             const dataKamar = d.santriPerKamar || [];
-            const ctxKamar = document.getElementById('chartPerKamar').getContext('2d');
-            window.chartKamar = new Chart(ctxKamar, {
-                type: 'bar',
-                data: {
-                    labels: dataKamar.map(item => item.kamar),
-                    datasets: [{
-                        label: 'Santri',
-                        data: dataKamar.map(item => item.jumlah),
-                        backgroundColor: '#489744'
-                    }]
-                },
+            new Chart(document.getElementById('chartPerKamar').getContext('2d'), {
+                type: 'bar', data: { labels: dataKamar.map(i=>i.kamar), datasets: [{ data: dataKamar.map(i=>i.jumlah), backgroundColor: '#489744' }] },
                 options: { responsive: true, plugins: { legend: { display: false } } }
             });
-
-            // --- 6. Grafik Santri per Kelas ---
+            // Grafik Kelas
             if(window.chartKelas) window.chartKelas.destroy();
             const dataKelas = d.santriPerKelas || [];
-            const ctxKelas = document.getElementById('chartPerKelas').getContext('2d');
-            window.chartKelas = new Chart(ctxKelas, {
-                type: 'bar',
-                data: {
-                    labels: dataKelas.map(item => 'Kelas '+item.kelas),
-                    datasets: [{
-                        label: 'Santri',
-                        data: dataKelas.map(item => item.jumlah),
-                        backgroundColor: '#1e88e5'
-                    }]
-                },
+            new Chart(document.getElementById('chartPerKelas').getContext('2d'), {
+                type: 'bar', data: { labels: dataKelas.map(i=>'Kelas '+i.kelas), datasets: [{ data: dataKelas.map(i=>i.jumlah), backgroundColor: '#1e88e5' }] },
                 options: { responsive: true, plugins: { legend: { display: false } } }
             });
-
-            // --- 7. Grafik Santri per Gedung ---
+            // Grafik Gedung
             if(window.chartGedung) window.chartGedung.destroy();
             const dataGedung = d.santriPerGedung || [];
-            const ctxGedung = document.getElementById('chartPerGedung').getContext('2d');
-            window.chartGedung = new Chart(ctxGedung, {
-                type: 'bar',
-                data: {
-                    labels: dataGedung.map(item => item.gedung),
-                    datasets: [{
-                        label: 'Santri',
-                        data: dataGedung.map(item => item.jumlah),
-                        backgroundColor: '#ffb300'
-                    }]
-                },
+            new Chart(document.getElementById('chartPerGedung').getContext('2d'), {
+                type: 'bar', data: { labels: dataGedung.map(i=>i.gedung), datasets: [{ data: dataGedung.map(i=>i.jumlah), backgroundColor: '#ffb300' }] },
                 options: { responsive: true, plugins: { legend: { display: false } } }
             });
 
-            // --- 8. List Pelanggaran Terbaru ---
-            const pelTerbaru = d.pelanggaranTerbaru || [];
-            let listPelHTML = '';
-            pelTerbaru.slice(0,5).forEach(item => {
-                listPelHTML += `<div class="list-item">
-                    <div class="list-info"><h4>${item.nama_santri}</h4><p>${item.pelanggaran} (${item.poin} poin)</p></div>
-                    <span class="status-badge status-danger">${item.tanggal}</span>
-                </div>`;
-            });
-            document.getElementById('list-pelanggaran-terbaru').innerHTML = listPelHTML || '<p style="font-size:13px; color:#888;">Belum ada data pelanggaran.</p>';
+            // List Pelanggaran Terbaru
+            const pel = d.pelanggaranTerbaru || [];
+            let listPel = '';
+            pel.slice(0,5).forEach(p => { listPel += `<div class="list-item"><div class="list-info"><h4>${p.nama_santri}</h4><p>${p.pelanggaran} (${p.poin} poin)</p></div><span class="status-badge status-danger">${p.tanggal}</span></div>`; });
+            document.getElementById('list-pelanggaran-terbaru').innerHTML = listPel || '<p style="font-size:13px; color:#888;">Belum ada data.</p>';
 
-            // --- 9. List Izin/Sakit ---
-            const izinSakit = d.izinSakitTerbaru || [];
-            let listIzinHTML = '';
-            izinSakit.slice(0,5).forEach(item => {
-                listIzinHTML += `<div class="list-item">
-                    <div class="list-info"><h4>${item.nama_santri}</h4><p>${item.keterangan} (${item.jenis})</p></div>
-                    <span class="status-badge status-warning">${item.tanggal}</span>
-                </div>`;
-            });
-            document.getElementById('list-izin-terbaru').innerHTML = listIzinHTML || '<p style="font-size:13px; color:#888;">Tidak ada santri izin/sakit.</p>';
-
-        } else {
-            renderDummyDashboard();
+            // List Izin/Sakit
+            const iz = d.izinSakitTerbaru || [];
+            let listIz = '';
+            iz.slice(0,5).forEach(i => { listIz += `<div class="list-item"><div class="list-info"><h4>${i.nama_santri}</h4><p>${i.keterangan} (${i.jenis})</p></div><span class="status-badge status-warning">${i.tanggal}</span></div>`; });
+            document.getElementById('list-izin-terbaru').innerHTML = listIz || '<p style="font-size:13px; color:#888;">Tidak ada santri izin/sakit.</p>';
         }
-    })
-    .catch(err => {
-        hideLoad();
-        console.error(err);
-        renderDummyDashboard();
-    });
-}
 
-function renderDummyDashboard() {
-    // Fallback data dummy jika API belum siap
-    const d = {
-        totAktif: 120, totNonaktif: 5, totLulus: 30, totPindah: 3, totKeluar: 2,
-        totIzin: 4, totSakit: 2,
-        chartPelLabels: ['Jan','Feb','Mar','Apr','Mei','Jun'],
-        chartPelData: [5,8,4,9,6,7],
-        persenAman: 85, persenPerhatian: 10, persenPembinaan: 5,
-        santriPerKamar: [{kamar:'A1',jumlah:12},{kamar:'A2',jumlah:9},{kamar:'B1',jumlah:15}],
-        santriPerKelas: [{kelas:'1',jumlah:20},{kelas:'2',jumlah:22},{kelas:'3',jumlah:18}],
-        santriPerGedung: [{gedung:'Al-Fath',jumlah:45},{gedung:'Ar-Rahman',jumlah:38}],
-        pelanggaranTerbaru: [],
-        izinSakitTerbaru: []
-    };
-    // Render ulang dengan data dummy (mirip kode di atas)
-    document.getElementById('dash-nama').innerText = currentUser?.nama || 'Admin';
-    // ... (isi render manual, bisa di-copy dari loadDashboard tapi pakai data d)
-    // Untuk mempersingkat, Anda bisa memanggil ulang loadDashboard dengan mock data,
-    // atau biarkan kosong. Saya sarankan isi minimal card agar tidak blank.
-    // Silakan lengkapi sendiri atau tanyakan lagi jika perlu.
-}
+        function renderDummyDashboard() {
+            const d = {
+                totAktif: 120, totNonaktif: 5, totLulus: 30, totPindah: 3, totKeluar: 2,
+                totIzin: 4, totSakit: 2,
+                chartPelLabels: ['Jan','Feb','Mar','Apr','Mei','Jun'],
+                chartPelData: [5,8,4,9,6,7],
+                persenAman: 85, persenPerhatian: 10, persenPembinaan: 5,
+                santriPerKamar: [{kamar:'A1',jumlah:12},{kamar:'A2',jumlah:9},{kamar:'B1',jumlah:15}],
+                santriPerKelas: [{kelas:'1',jumlah:20},{kelas:'2',jumlah:22},{kelas:'3',jumlah:18}],
+                santriPerGedung: [{gedung:'Al-Fath',jumlah:45},{gedung:'Ar-Rahman',jumlah:38}],
+                pelanggaranTerbaru: [],
+                izinSakitTerbaru: []
+            };
+            renderDashboardData(d);
+        }
 
         function loadTableData() {
             showLoad();
