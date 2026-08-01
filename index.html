@@ -16,7 +16,6 @@
             --bg: #F4FAF3;
             --text-dark: #1f2937;
             --sidebar-width: 250px;
-            /* safe area untuk iPhone */
             --safe-inset-top: env(safe-area-inset-top, 0px);
             --safe-inset-bottom: env(safe-area-inset-bottom, 0px);
         }
@@ -25,12 +24,13 @@
             background-color: var(--bg); 
             color: var(--text-dark); 
             overflow-x: hidden; 
-            /* dynamic viewport height supaya di iPhone address bar gak ganggu */
             height: 100vh; 
             height: 100dvh;
         }
 
-        /* --- LOGIN SCREEN --- */
+        /* =========================================
+           LOGIN SCREEN
+           ========================================= */
         #auth-screen { 
             height: 100vh; 
             height: 100dvh; 
@@ -48,18 +48,57 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
             width: 90%; 
             max-width: 420px; 
-            margin: 20px; /* biar gak nempel di tepi HP */
+            margin: 20px;
         }
+        .login-header { text-align: center; margin-bottom: 25px; }
+        .login-header h2 { color: var(--primary-dark); font-size: 22px; margin: 5px 0 0; line-height: 1.3; }
+        .login-header .subtitle { font-size: 13px; color: #555; margin-bottom: 12px; }
+        .login-header .badge { background: var(--primary-light); color: var(--primary-dark); padding: 6px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; font-size: 12px; color: #333; font-weight: bold; margin-bottom: 8px; }
+        .input-wrapper { position: relative; }
+        .input-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; font-size: 14px;}
+        .form-control-new { width: 100%; padding: 12px 15px 12px 40px; border: 1px solid #ddd; border-radius: 8px; outline: none; font-size: 14px; background: #fff; transition: 0.3s; }
+        .form-control-new:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(72,151,68,0.15); }
+        .toggle-password { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #888; cursor: pointer; }
+        .login-options { display: flex; justify-content: space-between; align-items: center; font-size: 12px; margin-bottom: 20px; }
+        .remember-me { color: #555; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .forgot-pass { color: var(--primary); text-decoration: none; font-weight: bold; }
+        .btn-login-new { width: 100%; padding: 12px; background: #1e5a2f; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+        .btn-login-new:hover { background: #154c27; }
+        .divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: #999; font-size: 11px; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #ddd; }
+        .divider span { padding: 0 10px; }
+        .btn-sso { width: 100%; padding: 10px; background: #fff; color: #333; border: 1px solid #ddd; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-sso:hover { background: #f9f9f9; }
+        .login-footer-new { text-align: center; font-size: 10px; color: #777; margin-top: 25px; line-height: 1.6; }
 
-        /* --- APP LAYOUT --- */
+        /* =========================================
+           APP LAYOUT
+           ========================================= */
         #app-screen { 
             display: none; 
             height: 100vh; 
             height: 100dvh; 
             overflow: hidden; 
-            position: relative; /* untuk positioning sidebar mobile */
+            position: relative;
         }
         
+        /* Overlay untuk mobile sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 150;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+
         /* ===== SIDEBAR ===== */
         .sidebar { 
             width: var(--sidebar-width); 
@@ -68,7 +107,7 @@
             display: flex; 
             flex-direction: column; 
             transition: width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.3s ease; 
-            z-index: 100;
+            z-index: 200;
             flex-shrink: 0;
         }
         .sidebar.collapsed { width: 85px; }
@@ -126,7 +165,6 @@
             border-top-right-radius: 25px;
             box-shadow: 10px -10px 0 10px var(--bg);
         }
-        /* menu admin */
         .admin-only { display: none; }
 
         /* ===== MAIN CONTENT ===== */
@@ -135,7 +173,7 @@
             display: flex; 
             flex-direction: column; 
             overflow: hidden; 
-            min-width: 0; /* penting untuk flex child */
+            min-width: 0;
         }
         .topbar { 
             height: 60px; 
@@ -148,53 +186,121 @@
             flex-shrink: 0;
         }
         .content-area { flex: 1; padding: 20px; overflow-y: auto; }
-        
-        /* --- DASHBOARD RESPONSIVE --- */
-        .dashboard-container { display: flex; flex-direction: column; gap: 20px; }
-        .dash-cards-row { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 20px; 
-        }
-        .dash-grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-        .dash-grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .dash-card, .dash-panel { /* ... */ }
-        /* (style dashboard lainnya tetap) */
-
-        /* --- TABEL & PAGINATION --- */
+        .btn { padding: 8px 15px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-danger { background: #e53935; }
+        .btn-warning { background: #ffb300; color: #333;}
+        .view-section { display: none; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        table { width: 100%; min-width: 600px; border-collapse: collapse; } /* min-width agar scroll */
+        table { width: 100%; min-width: 600px; border-collapse: collapse; }
         th, td { padding: 12px 15px; text-align: left; font-size: 14px; }
         th { background: #459a4c; color: white; font-weight: 600; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
         td { border-bottom: 1px solid #eee; }
         tr:hover td { background-color: #f9fafb; }
-
-        /* --- MODAL RESPONSIVE --- */
-        .modal-content { 
-            width: 95%; 
-            max-width: 750px; 
-            margin: 20px;
-        }
-        .form-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 20px; 
-        }
-
-        /* --- TOPBAR --- */
-        .topbar-right { display: flex; align-items: center; gap: 15px; }
-        .icon-btn { background: transparent; border: none; font-size: 20px; color: var(--text-dark); cursor: pointer; /* ... */ }
-
-        /* --- DARK MODE --- */
-        /* ... tetap seperti sebelumnya ... */
-
-        /* ===================================================================
-           MEDIA QUERIES UNTUK RESPONSIVE (Mobile, Tablet, iPhone)
-           =================================================================== */
         
-        /* Tablet kecil / HP landscape (max 768px) */
+        /* Loader */
+        #loader { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index: 9999; justify-content:center; align-items:center; }
+        .spinner { border: 5px solid #f3f3f3; border-top: 5px solid var(--primary); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 16px; width: 95%; max-width: 750px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); position: relative; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f3f4f6; padding-bottom: 15px; margin-bottom: 25px; }
+        .modal-header h3 { font-size: 20px; color: var(--text-dark); margin: 0; font-weight: 700; }
+        .close-btn { background: #f3f4f6; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #6b7280; transition: 0.2s; }
+        .close-btn:hover { background: #e5e7eb; color: #ef4444; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; text-align: left; }
+        .form-group label { margin-bottom: 8px; font-weight: 600; font-size: 13px; color: #4b5563; letter-spacing: 0.3px; }
+        .form-control { width: 100%; padding: 12px 16px; border: 1.5px solid #d1d5db; border-radius: 10px; font-size: 14px; background-color: #f9fafb; color: #1f2937; transition: all 0.3s ease; outline: none; }
+        .form-control:hover { border-color: #9ca3af; }
+        .form-control:focus { border-color: var(--primary); background-color: #ffffff; box-shadow: 0 0 0 4px var(--primary-light); }
+        .full-width { grid-column: 1 / -1; }
+        .modal-footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #f3f4f6; display: flex; justify-content: flex-end; gap: 12px; }
+        .modal-footer .btn { padding: 10px 24px; font-size: 14px; border-radius: 8px; font-weight: 600; }
+
+        /* =========================================
+           DASHBOARD
+           ========================================= */
+        .dashboard-container { display: flex; flex-direction: column; gap: 20px; }
+        .dash-banner {
+            background: linear-gradient(to right, #244423 40%, rgba(36, 68, 35, 0.1) 100%), 
+                        url('https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1000&q=80');
+            background-size: cover;
+            background-position: center right;
+            border-radius: 15px;
+            padding: 40px 30px;
+            color: white;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(30,90,47,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .dash-banner h2 { font-size: 26px; margin-bottom: 5px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        .dash-banner p { font-size: 14px; opacity: 0.95; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+        .dash-cards-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .dash-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: center; }
+        .dash-card.dark { background: var(--primary-dark); color: white; }
+        .dash-card .title { font-size: 13px; color: #777; margin-bottom: 10px; font-weight: bold; }
+        .dash-card.dark .title { color: var(--primary-light); }
+        .dash-card .value { font-size: 28px; font-weight: bold; color: #333; }
+        .dash-card.dark .value { color: white; }
+        .dash-card .desc { font-size: 11px; margin-top: 10px; color: #888; display: flex; align-items: center; gap: 5px; }
+        .dash-card .badge-green { background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
+        .dash-grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .dash-grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .dash-panel { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+        .dash-panel h3 { font-size: 16px; margin-bottom: 20px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eee; }
+        .list-item:last-child { border-bottom: none; }
+        .list-info h4 { font-size: 14px; color: #333; margin-bottom: 3px; }
+        .list-info p { font-size: 12px; color: #777; }
+        .status-badge { padding: 4px 10px; border-radius: 15px; font-size: 11px; font-weight: bold; }
+        .status-danger { background: #ffebee; color: #c62828; }
+        .status-warning { background: #fff8e1; color: #f57f17; }
+
+        /* =========================================
+           TOPBAR
+           ========================================= */
+        .topbar-right { display: flex; align-items: center; gap: 15px; }
+        .icon-btn { background: transparent; border: none; font-size: 20px; color: var(--text-dark); cursor: pointer; transition: 0.2s; position: relative; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 12px; }
+        .icon-btn:hover { color: var(--primary); }
+        .box-btn { border: 1.5px solid #d1d5db; color: #4b5563; }
+        .box-btn:hover { border-color: var(--primary); background: var(--bg); }
+        .notify-badge { position: absolute; top: 8px; right: 8px; width: 10px; height: 10px; background: #ff4757; border-radius: 50%; border: 2px solid #fff; }
+        .user-profile { width: 40px; height: 40px; background: #4f46e5; color: white; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 18px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); }
+        .user-profile:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4); }
+
+        /* =========================================
+           DARK MODE
+           ========================================= */
+        body.dark-mode {
+            --bg: #111827;
+            --text-dark: #f3f4f6;
+            color: var(--text-dark);
+        }
+        body.dark-mode .topbar, body.dark-mode .card, body.dark-mode .dash-panel, body.dark-mode .table-responsive, body.dark-mode .modal-content {
+            background: #1f2937;
+            box-shadow: none;
+            border: 1px solid #374151;
+        }
+        body.dark-mode .box-btn { border-color: #4b5563; color: #d1d5db; }
+        body.dark-mode .notify-badge { border-color: #1f2937; }
+        body.dark-mode th { background: #374151; color: white; border-bottom: none; }
+        body.dark-mode td { border-bottom: 1px solid #374151; }
+        body.dark-mode tr:hover { background: #374151; }
+        body.dark-mode .form-control-new, body.dark-mode .form-control { background: #111827; color: white; border-color: #4b5563; }
+        body.dark-mode .dash-card { background: #1f2937; }
+        body.dark-mode .dash-card .value { color: white; }
+        body.dark-mode .dash-panel h3 { color: white; border-color: #374151; }
+
+        /* =========================================
+           RESPONSIVE (Mobile, Tablet, iPhone)
+           ========================================= */
         @media (max-width: 768px) {
-            /* Ubah layout app: sidebar jadi overlay fixed */
             #app-screen {
                 flex-direction: column;
             }
@@ -207,39 +313,20 @@
                 transform: translateX(-100%);
                 box-shadow: 2px 0 15px rgba(0,0,0,0.3);
                 z-index: 200;
-                /* padding-top: var(--safe-inset-top); */ /* jika perlu */
             }
             .sidebar.mobile-open {
                 transform: translateX(0);
             }
             .sidebar.collapsed {
-                width: 85px; /* di mobile tetap bisa collapse kalau diaktifkan */
+                width: 85px;
             }
-            /* overlay background saat sidebar terbuka */
-            .sidebar-overlay {
-                display: none;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.4);
-                z-index: 150;
-            }
-            .sidebar-overlay.active {
-                display: block;
-            }
-            /* Main content selalu full width */
             .main-content {
                 width: 100%;
             }
-            /* Tombol hamburger lebih besar */
             .topbar .fa-bars {
                 font-size: 22px;
                 padding: 10px;
             }
-
-            /* Dashboard cards: 2 kolom */
             .dash-cards-row {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -255,19 +342,13 @@
                 align-items: flex-start;
             }
             .dash-banner h2 { font-size: 20px; }
-            
-            /* Tabel: font lebih kecil */
             th, td { padding: 8px 10px; font-size: 12px; }
-            
-            /* Form modal: 1 kolom */
             .form-grid {
                 grid-template-columns: 1fr;
             }
             .modal-content {
                 padding: 20px;
             }
-            
-            /* Header action: tumpuk di mobile */
             .header-action {
                 flex-direction: column;
                 align-items: stretch;
@@ -284,8 +365,6 @@
                 width: 100%;
                 justify-content: center;
             }
-
-            /* pagination lebih simpel */
             #pagination-controls {
                 flex-direction: column;
                 align-items: center;
@@ -293,10 +372,9 @@
             }
         }
 
-        /* HP kecil (max 480px) */
         @media (max-width: 480px) {
             .dash-cards-row {
-                grid-template-columns: 1fr; /* 1 card per baris */
+                grid-template-columns: 1fr;
             }
             .login-box-new {
                 padding: 25px;
@@ -314,7 +392,6 @@
                 height: 35px;
                 font-size: 18px;
             }
-            /* modal lebih sempit */
             .modal-content {
                 width: 100%;
                 border-radius: 0;
@@ -324,7 +401,6 @@
             }
         }
 
-        /* Tablet besar / landscape (antara 769px - 1024px) */
         @media (min-width: 769px) and (max-width: 1024px) {
             .dash-cards-row {
                 grid-template-columns: repeat(3, 1fr);
@@ -334,7 +410,6 @@
             }
         }
 
-        /* Untuk iPhone dengan notch (safe area) */
         @supports (padding: env(safe-area-inset-bottom)) {
             .content-area {
                 padding-bottom: calc(20px + var(--safe-inset-bottom));
@@ -352,46 +427,582 @@
 
     <div id="loader"><div class="spinner"></div></div>
 
-    <!-- Login Screen -->
+    <!-- =========================================
+         LOGIN SCREEN
+         ========================================= -->
     <div id="auth-screen">
-        <!-- ... sama seperti sebelumnya ... -->
+        <div class="login-box-new">
+            <div class="login-header">
+                <i class="fas fa-book-reader" style="font-size: 35px; color: #1e5a2f; margin-bottom: 10px;"></i>
+                <h2>SISTEM MANAJEMEN SANTRI<br>(SMS)</h2>
+                <div class="subtitle">Pembinaan Santri Putra</div>
+                <span class="badge">Administrasi & Pembinaan Santri</span>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="input-group">
+                    <label>Username</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" id="username" class="form-control-new" placeholder="Masukkan username" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Password</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" id="password" class="form-control-new" placeholder="Masukkan password" required>
+                        <i class="fas fa-eye toggle-password" onclick="togglePass()" id="eye-icon"></i>
+                    </div>
+                </div>
+
+                <div class="login-options">
+                    <label class="remember-me"><input type="checkbox"> Ingat saya</label>
+                    <a href="#" class="forgot-pass">Lupa password?</a>
+                </div>
+
+                <button type="submit" class="btn-login-new">LOGIN</button>
+            </form>
+
+            <div class="divider"><span>atau</span></div>
+
+            <button type="button" class="btn-sso" onclick="alert('Fitur SSO Google sedang dalam pengembangan')">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="18"> Login dengan SSO Google
+            </button>
+
+            <div class="login-footer-new">
+                Hubungi admin sistem untuk login dengan SSO Google<br>
+                Version 1.0.0 <br>
+                &copy; 2026 Mathorart.id. All rights reserved.
+            </div>
+        </div>
     </div>
 
-    <!-- Main App -->
+    <!-- =========================================
+         MAIN APP
+         ========================================= -->
     <div id="app-screen">
         <!-- Sidebar -->
         <div class="sidebar" id="sidebar">
-            <!-- ... header dan nav-menu sama ... -->
+            <div class="sidebar-header">
+                <i class="fas fa-mosque sidebar-logo-icon"></i>
+                <h3>SISTEM MANAJEMEN<br>SANTRI (SMS)</h3>
+            </div>
+            <div class="nav-menu" id="nav-menu">
+                <div class="nav-item active" onclick="navigate('dashboard', event)">
+                    <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                </div>
+                <div class="nav-item" onclick="navigate('santri', event)">
+                    <i class="fas fa-users"></i> <span>Data Santri</span>
+                </div>
+                <div class="nav-item" onclick="navigate('pelanggaran', event)">
+                    <i class="fas fa-exclamation-triangle"></i> <span>Pelanggaran</span>
+                </div>
+                <div class="nav-item" onclick="navigate('perizinan', event)">
+                    <i class="fas fa-door-open"></i> <span>Perizinan</span>
+                </div>
+                <div class="nav-item admin-only" onclick="navigate('master', event)">
+                    <i class="fas fa-database"></i> <span>Master Data</span>
+                </div>
+            </div>
         </div>
 
         <div class="main-content">
             <div class="topbar">
                 <div><i class="fas fa-bars" style="cursor:pointer; font-size: 18px;" onclick="toggleSidebar()" id="sidebar-toggle"></i></div>
-                <!-- topbar right sama -->
+                <div class="topbar-right">
+                    <button class="icon-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Mode Gelap/Terang">
+                        <i class="far fa-moon"></i>
+                    </button>
+                    <button class="icon-btn box-btn" onclick="alert('Belum ada notifikasi baru.')" title="Notifikasi">
+                        <i class="far fa-bell"></i>
+                        <span class="notify-badge"></span>
+                    </button>
+                    <div class="user-profile" onclick="confirmLogout()" title="Klik untuk Logout">
+                        <span id="user-initial">U</span>
+                    </div>
+                </div>
             </div>
             
             <div class="content-area" id="content-area">
-                <!-- dashboard dan view lainnya -->
+                <!-- Dashboard View -->
+                <div id="view-dashboard" class="view-section" style="display: block;">
+                    <div class="dashboard-container">
+                        <div class="dash-banner">
+                            <div style="max-width: 65%;">
+                                <h2>Ahlan wa Sahlan, <span id="dash-nama">Admin</span>!</h2>
+                                <p>Berikut adalah ringkasan data pondok pesantren hari ini.</p>
+                            </div>
+                        </div>
+                        <div class="dash-cards-row" id="dash-cards-container"></div>
+                        <div class="dash-grid-2">
+                            <div class="dash-panel">
+                                <h3>Grafik Pelanggaran Bulanan</h3>
+                                <canvas id="chartPelanggaranBaru" height="100"></canvas>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Statistik Cepat Bulan Ini</h3>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Aman (0-19 Poin)</span> <strong>85%</strong></div>
+                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#4caf50; width:85%; height:100%; border-radius:5px;"></div></div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Perhatian (20-49 Poin)</span> <strong>10%</strong></div>
+                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#ffb300; width:10%; height:100%; border-radius:5px;"></div></div>
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Pembinaan (>50 Poin)</span> <strong>5%</strong></div>
+                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#e53935; width:5%; height:100%; border-radius:5px;"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dash-grid-half">
+                            <div class="dash-panel">
+                                <h3>5 Pelanggaran Terbaru</h3>
+                                <div id="list-pelanggaran-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
+                            </div>
+                            <div class="dash-panel">
+                                <h3>Santri Sedang Izin/Sakit</h3>
+                                <div id="list-izin-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Generic View -->
+                <div id="view-generic" class="view-section">
+                    <div class="header-action" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 20px;">
+                        <h2 id="view-title" style="font-weight: 700; white-space: nowrap;">Data</h2>
+                        <div style="display: flex; gap: 15px; align-items: center; flex: 1; max-width: 600px; justify-content: flex-end;">
+                            <div style="position: relative; flex: 1;">
+                                <i class="fas fa-search" style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 14px;"></i>
+                                <input type="text" id="searchInput" class="form-control" style="width: 100%; padding: 11px 16px 11px 42px; border-radius: 12px; border: 1.5px solid #d1d5db; background-color: #ffffff; font-size: 14px; outline: none; transition: all 0.3s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02);" placeholder="Cari Nama, NIS, Kamar, Kelas..." onkeyup="filterTable(true)" onfocus="this.style.borderColor='var(--primary)'; this.style.boxShadow='0 0 0 4px var(--primary-light)'" onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='0 2px 4px rgba(0,0,0,0.02)'">
+                            </div>
+                            <button class="btn" style="box-shadow: 0 4px 6px rgba(72,151,68,0.2); padding: 11px 20px; border-radius: 10px; font-weight: 600; white-space: nowrap;" onclick="openModal()">
+                                <i class="fas fa-plus"></i> Tambah
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="data-table">
+                            <thead id="data-table-head"></thead>
+                            <tbody id="data-table-body"></tbody>
+                        </table>
+                    </div>
+                    <div id="pagination-controls" style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; font-size: 13px; color: #6b7280; display: none;">
+                        <span id="pagination-info">Menampilkan 0 data</span>
+                        <div id="pagination-buttons" style="display: flex; gap: 8px; align-items: center;"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal sama -->
-    <script>
-        // ... semua script sebelumnya ...
+    <!-- Modal -->
+    <div id="genericModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Form Input</h3>
+                <button type="button" class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="genericForm" onsubmit="submitForm(event)">
+                <input type="hidden" id="form-id">
+                <div class="form-grid" id="form-fields"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" style="background: #fef2f2; color: #ef4444; border: 1px solid #fca5a5;" onclick="closeModal()">Batal</button>
+                    <button type="submit" class="btn" style="box-shadow: 0 4px 6px rgba(72,151,68,0.2);">Simpan Data</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        // ===== FUNGSI TOGGLE SIDEBAR (RESPONSIVE) =====
+    <script>
+        const API_URL = "https://script.google.com/macros/s/AKfycby007mXt-2sptjAsCgtEsMGlZMMytRVAWzOM87eopYdiyp0Qx5obG0D9IZ5eIUzQMQg/exec"; 
+
+        // State
+        let currentUser = null;
+        let currentModule = '';
+        let moduleData = [];
+        let schemaDef = {};
+        let listNamaSantri = [];
+        let currentPage = 1;
+        const rowsPerPage = 20;
+
+        // Schema
+        const schemas = {
+            santri: {
+                title: "Data Santri", table: "Santri",
+                fields: [
+                    { name: 'id', label: 'ID', type: 'hidden' },
+                    { name: 'asrama', label: 'Asrama / Gedung', type: 'text', req: true },
+                    { name: 'pembina', label: 'Pembina Asrama', type: 'text', req: true },
+                    { name: 'nis', label: 'NIS', type: 'text', req: true },
+                    { name: 'nama', label: 'Nama Lengkap', type: 'text', req: true, full: true },
+                    { name: 'kelas', label: 'Kelas (1-6)', type: 'select', options: ['1','2','3','4','5','6'] },
+                    { name: 'kamar', label: 'Kamar', type: 'text' },
+                    { name: 'namakelas', label: 'Nama Kelas', type: 'text' },
+                    { name: 'tmplahir', label: 'Tempat Lahir', type: 'text' },
+                    { name: 'tgllahir', label: 'Tanggal Lahir', type: 'date' },
+                    { name: 'jk', label: 'Jenis Kelamin', type: 'select', options: ['Laki-laki', 'Perempuan'] },
+                    { name: 'tahunmasuk', label: 'Tahun Masuk', type: 'number' },
+                    { name: 'status', label: 'Status', type: 'select', options: ['Aktif', 'Nonaktif', 'Lulus', 'Pindah'] },
+                    { name: 'alamat', label: 'Alamat Lengkap', type: 'text', full: true },
+                    { name: 'ayah', label: 'Nama Ayah', type: 'text' },
+                    { name: 'ibu', label: 'Nama Ibu', type: 'text' },
+                    { name: 'hp', label: 'No HP (Orang Tua)', type: 'text' }
+                ],
+                tableHeaders: ['NIS', 'Gedung', 'Pembina', 'Nama', 'Kelas', 'Kamar', 'Nama Kelas', 'Status'],
+                cols: ['nis', 'asrama', 'pembina', 'nama', 'kelas', 'kamar', 'namakelas', 'status']
+            },
+            pelanggaran: {
+                title: "Data Pelanggaran", table: "Pelanggaran",
+                fields: [
+                    { name: 'id', label: 'ID', type: 'hidden' },
+                    { name: 'tanggal', label: 'Tanggal', type: 'date', req: true },
+                    { name: 'nama_santri', label: 'Nama Santri', type: 'autocomplete', req: true },
+                    { name: 'pelanggaran', label: 'Pelanggaran', type: 'text', full: true, req: true },
+                    { name: 'poin', label: 'Poin', type: 'number', req: true },
+                    { name: 'tindakan', label: 'Tindak Lanjut', type: 'text' }
+                ],
+                cols: ['tanggal', 'nama_santri', 'pelanggaran', 'poin', 'tindakan']
+            }
+        };
+
+        const showLoad = () => document.getElementById('loader').style.display = 'flex';
+        const hideLoad = () => document.getElementById('loader').style.display = 'none';
+        const toast = (msg, icon='success') => Swal.fire({toast:true, position:'top-end', icon:icon, title:msg, showConfirmButton:false, timer:3000});
+
+        async function apiCall(data) {
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) throw new Error("Jaringan bermasalah");
+                return await response.json();
+            } catch (err) {
+                console.error("Error API:", err);
+                throw new Error("Gagal terhubung ke server database.");
+            }
+        }
+
+        // Cek session saat load
+        window.onload = () => {
+            const savedUser = localStorage.getItem('sim_user');
+            if(savedUser) {
+                currentUser = JSON.parse(savedUser);
+                setupApp();
+            }
+        };
+
+        function handleLogin(e) {
+            e.preventDefault();
+            showLoad();
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            apiCall({ action: 'login', username: u, password: p })
+            .then(res => {
+                hideLoad();
+                if(res.success) { 
+                    currentUser = res.user; 
+                    localStorage.setItem('sim_user', JSON.stringify(currentUser));
+                    setupApp(); 
+                    toast('Login Berhasil'); 
+                } else {
+                    toast(res.message, 'error');
+                }
+            })
+            .catch(err => { hideLoad(); toast(err.message, 'error'); });
+        }
+
+        function logout() {
+            localStorage.removeItem('sim_user');
+            window.location.reload();
+        }
+
+        function confirmLogout() {
+            Swal.fire({
+                title: 'Keluar dari aplikasi?',
+                text: "Sesi login Anda akan diakhiri.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#e53935',
+                cancelButtonColor: '#9ca3af',
+                confirmButtonText: 'Ya, Logout',
+                cancelButtonText: 'Batal',
+                borderRadius: '15px'
+            }).then((result) => {
+                if (result.isConfirmed) logout();
+            });
+        }
+
+        function setupApp() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'flex';
+            if(currentUser && currentUser.nama) {
+                document.getElementById('user-initial').innerText = currentUser.nama.charAt(0).toUpperCase();
+            }
+            if(currentUser && currentUser.role === 'Super Admin') {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
+            }
+            apiCall({ action: 'getTableData', sheetName: 'Santri' }).then(res => {
+                if(res.success) listNamaSantri = res.data.map(s => s.nama);
+            });
+            navigate('dashboard');
+        }
+
+        function togglePass() {
+            const passInput = document.getElementById('password');
+            const icon = document.getElementById('eye-icon');
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('#darkModeBtn i');
+            if(document.body.classList.contains('dark-mode')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+                icon.classList.replace('far', 'fas');
+                icon.style.color = '#fbbf24';
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+                icon.classList.replace('fas', 'far');
+                icon.style.color = '';
+            }
+        }
+
+        // Navigasi dengan event parameter
+        function navigate(view, evt) {
+            document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if (evt && evt.currentTarget) {
+                evt.currentTarget.classList.add('active');
+            } else {
+                const items = document.querySelectorAll('.nav-item');
+                items.forEach(item => {
+                    const onclick = item.getAttribute('onclick');
+                    if (onclick && onclick.includes(`'${view}'`)) item.classList.add('active');
+                });
+            }
+
+            if(view === 'dashboard') {
+                document.getElementById('view-dashboard').style.display = 'block';
+                loadDashboard();
+            } else if (schemas[view]) {
+                currentModule = view;
+                schemaDef = schemas[view];
+                document.getElementById('view-generic').style.display = 'block';
+                document.getElementById('view-title').innerText = schemaDef.title;
+                loadTableData();
+            }
+
+            // Tutup sidebar mobile setelah navigasi
+            if (window.innerWidth <= 768) {
+                closeMobileSidebar();
+            }
+        }
+
+        function loadDashboard() {
+            showLoad();
+            if(currentUser) document.getElementById('dash-nama').innerText = currentUser.nama;
+            apiCall({ action: 'getDashboardStats' }).then(res => {
+                hideLoad();
+                if(res.success) {
+                    const d = res.data;
+                    document.getElementById('dash-cards-container').innerHTML = `
+                        <div class="dash-card dark">
+                            <div class="title">Total Santri Aktif</div>
+                            <div class="value">${d.totAktif} Santri</div>
+                            <div class="desc">Berdasarkan data master</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="title">Pelanggaran Bulan Ini</div>
+                            <div class="value">${d.totPelanggaran}</div>
+                            <div class="desc"><span class="badge-green">+2%</span> dari bulan lalu</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="title">Santri Sedang Izin</div>
+                            <div class="value">${d.totIzin}</div>
+                            <div class="desc">Santri di luar pondok</div>
+                        </div>
+                        <div class="dash-card">
+                            <div class="title">Santri Sedang Sakit</div>
+                            <div class="value">${d.totSakit}</div>
+                            <div class="desc">Dirawat di poskestren</div>
+                        </div>
+                    `;
+                    if(window.chartDash) window.chartDash.destroy();
+                    const ctx = document.getElementById('chartPelanggaranBaru').getContext('2d');
+                    window.chartDash = new Chart(ctx, {
+                        type: 'bar',
+                        data: { 
+                            labels: d.chartPelLabels, 
+                            datasets: [{ 
+                                label: 'Jumlah Pelanggaran', 
+                                data: d.chartPelData, 
+                                backgroundColor: '#489744', 
+                                borderRadius: 5 
+                            }] 
+                        },
+                        options: { responsive: true, plugins: { legend: { display: false } } }
+                    });
+                }
+            }).catch(err => hideLoad());
+        }
+
+        function loadTableData() {
+            showLoad();
+            apiCall({ action: 'getTableData', sheetName: schemaDef.table }).then(res => {
+                hideLoad();
+                if(res.success) {
+                    moduleData = res.data;
+                    renderTable();
+                }
+            }).catch(err => hideLoad());
+        }
+
+        function renderTable(dataToRender = moduleData) {
+            const head = document.getElementById('data-table-head');
+            const body = document.getElementById('data-table-body');
+            const pagControls = document.getElementById('pagination-controls');
+            if (!head || !body) return;
+            
+            let headHTML = '<tr><th width="50" style="text-align:center;">NO</th>';
+            if (schemaDef.tableHeaders) {
+                schemaDef.tableHeaders.forEach(h => headHTML += `<th>${h.toUpperCase()}</th>`);
+            } else {
+                schemaDef.cols.forEach(c => headHTML += `<th>${c.toUpperCase()}</th>`);
+            }
+            headHTML += '<th style="text-align:center;">AKSI</th></tr>';
+            head.innerHTML = headHTML;
+
+            const totalData = dataToRender.length;
+            const totalPages = Math.ceil(totalData / rowsPerPage);
+            if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+            if (currentPage < 1) currentPage = 1;
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const paginatedData = dataToRender.slice(startIndex, endIndex);
+
+            let bodyHTML = '';
+            if (totalData === 0) {
+                bodyHTML = `<tr><td colspan="10" style="text-align:center; padding:30px; color:#6b7280; font-style:italic;">Oops, data yang dicari tidak ditemukan.</td></tr>`;
+                pagControls.style.display = 'none';
+            } else {
+                pagControls.style.display = 'flex';
+                paginatedData.forEach((row, index) => {
+                    bodyHTML += '<tr>';
+                    bodyHTML += `<td style="text-align:center; font-weight:bold;">${startIndex + index + 1}</td>`;
+                    schemaDef.cols.forEach(c => bodyHTML += `<td>${row[c] || '-'}</td>`);
+                    bodyHTML += `
+                        <td style="text-align:center;">
+                            <button class="btn btn-warning" style="margin-right:4px;" onclick="editData('${row.id}')"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger" onclick="deleteData('${row.id}')"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
+            }
+            body.innerHTML = bodyHTML;
+            renderPagination(totalData, totalPages);
+        }
+
+        function renderPagination(totalData, totalPages) {
+            const info = document.getElementById('pagination-info');
+            const buttons = document.getElementById('pagination-buttons');
+            const start = ((currentPage - 1) * rowsPerPage) + 1;
+            const end = Math.min(currentPage * rowsPerPage, totalData);
+            info.innerText = `Menampilkan ${start} - ${end} dari total ${totalData} santri`;
+            let btnHTML = '';
+            btnHTML += `<button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} style="padding: 6px 12px; border: 1px solid #d1d5db; background: ${currentPage === 1 ? '#f3f4f6' : 'white'}; border-radius: 6px; color: ${currentPage === 1 ? '#9ca3af' : '#374151'}; cursor: ${currentPage === 1 ? 'not-allowed' : 'pointer'};"> < Prev </button>`;
+            btnHTML += `<span style="padding: 0 10px; font-weight: 600; color: var(--primary);">Hal ${currentPage} / ${totalPages}</span>`;
+            btnHTML += `<button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} style="padding: 6px 12px; border: 1px solid #d1d5db; background: ${currentPage === totalPages ? '#f3f4f6' : 'white'}; border-radius: 6px; color: ${currentPage === totalPages ? '#9ca3af' : '#374151'}; cursor: ${currentPage === totalPages ? 'not-allowed' : 'pointer'};"> Next > </button>`;
+            buttons.innerHTML = btnHTML;
+        }
+
+        function changePage(newPage) {
+            currentPage = newPage;
+            filterTable(false);
+        }
+
+        function filterTable(resetPage = true) {
+            if (resetPage) currentPage = 1;
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const filteredData = moduleData.filter(row => {
+                return Object.values(row).some(val => String(val).toLowerCase().includes(keyword));
+            });
+            renderTable(filteredData);
+        }
+        
+        function openModal(id = null) {
+            document.getElementById('genericModal').style.display = 'flex';
+            const fieldsContainer = document.getElementById('form-fields');
+            fieldsContainer.innerHTML = '';
+            let rowData = id ? moduleData.find(r => r.id === id) : {};
+            schemaDef.fields.forEach(f => {
+                let val = rowData[f.name] || '';
+                let html = `<div class="form-group ${f.full ? 'full-width' : ''}">`;
+                if(f.type !== 'hidden') html += `<label>${f.label}</label>`;
+                if(f.type === 'select') {
+                    html += `<select id="f_${f.name}" class="form-control" ${f.req?'required':''}>
+                        <option value="">Pilih...</option>
+                        ${f.options.map(o => `<option value="${o}" ${val==o?'selected':''}>${o}</option>`).join('')}
+                    </select>`;
+                } else if (f.type === 'autocomplete') {
+                    html += `<input type="text" id="f_${f.name}" list="list_${f.name}" class="form-control" value="${val}" ${f.req?'required':''} autocomplete="off">
+                    <datalist id="list_${f.name}">
+                        ${listNamaSantri.map(n => `<option value="${n}">`).join('')}
+                    </datalist>`;
+                } else {
+                    html += `<input type="${f.type}" id="f_${f.name}" class="form-control" value="${val}" ${f.req?'required':''}>`;
+                }
+                html += `</div>`;
+                fieldsContainer.innerHTML += html;
+            });
+        }
+
+        function closeModal() { document.getElementById('genericModal').style.display = 'none'; }
+
+        function submitForm(e) {
+            e.preventDefault();
+            let data = {};
+            schemaDef.fields.forEach(f => { data[f.name] = document.getElementById(`f_${f.name}`).value; });
+            showLoad();
+            apiCall({ action: 'saveRecord', sheetName: schemaDef.table, data: data, username: currentUser.username })
+            .then(res => {
+                hideLoad(); closeModal(); loadTableData(); toast('Berhasil Disimpan');
+            });
+        }
+
+        function deleteData(id) {
+            if(confirm("Yakin hapus data ini?")) {
+                showLoad();
+                apiCall({ action: 'deleteRecord', sheetName: schemaDef.table, id: id, username: currentUser.username })
+                .then(res => { hideLoad(); loadTableData(); toast('Berhasil Dihapus'); });
+            }
+        }
+
+        function editData(id) { openModal(id); }
+
+        // ===== FUNGSI SIDEBAR RESPONSIVE =====
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-            // Deteksi jika lebar layar <= 768 (mobile), gunakan overlay mode
             if (window.innerWidth <= 768) {
                 sidebar.classList.toggle('mobile-open');
                 overlay.classList.toggle('active');
-                // Pastikan class collapsed tidak bentrok (di mobile kita pakai mobile-open)
                 sidebar.classList.remove('collapsed');
             } else {
-                // Desktop: collapse/expand seperti sebelumnya
                 sidebar.classList.toggle('collapsed');
             }
         }
@@ -403,27 +1014,14 @@
             overlay.classList.remove('active');
         }
 
-        // Tutup sidebar mobile jika layar di-resize ke atas 768px
         window.addEventListener('resize', function() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
             if (window.innerWidth > 768) {
                 sidebar.classList.remove('mobile-open');
                 overlay.classList.remove('active');
-                // Kembalikan ke collapsed/expand sesuai preferensi (biarkan saja default tidak collapsed)
             }
         });
-
-        // Saat navigasi dari sidebar mobile, tutup sidebar otomatis
-        const originalNavigate = navigate;
-        navigate = function(view, evt) {
-            originalNavigate(view, evt);
-            if (window.innerWidth <= 768) {
-                closeMobileSidebar();
-            }
-        };
-
-        // ... sisa script tetap ...
     </script>
 </body>
 </html>
