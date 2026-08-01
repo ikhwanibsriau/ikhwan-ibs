@@ -758,53 +758,66 @@
         }
 
         function loadDashboard() {
-            showLoad();
             if(currentUser) document.getElementById('dash-nama').innerText = currentUser.nama;
+            
+            const container = document.getElementById('dash-cards-container');
+            
+            // Tampilkan loading ringan di area kartu dashboard saja, jangan kunci layar
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align:center; padding: 40px; color: #6b7280;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 28px; color: var(--primary); margin-bottom:10px;"></i>
+                    <br>Menghitung statistik pondok...
+                </div>
+            `;
 
             apiCall({ action: 'getDashboardStats' }).then(res => {
-                hideLoad();
                 if(res.success) {
                     const d = res.data;
-                    document.getElementById('dash-cards-container').innerHTML = `
+                    container.innerHTML = `
                         <div class="dash-card dark">
                             <div class="title">Total Santri Aktif</div>
-                            <div class="value">${d.totAktif} Santri</div>
+                            <div class="value">${d.totAktif || 0} Santri</div>
                             <div class="desc">Berdasarkan data master</div>
                         </div>
                         <div class="dash-card">
                             <div class="title">Pelanggaran Bulan Ini</div>
-                            <div class="value">${d.totPelanggaran}</div>
-                            <div class="desc"><span class="badge-green">+2%</span> dari bulan lalu</div>
+                            <div class="value">${d.totPelanggaran || 0}</div>
+                            <div class="desc"><span class="badge-green">Update Terbaru</span></div>
                         </div>
                         <div class="dash-card">
                             <div class="title">Santri Sedang Izin</div>
-                            <div class="value">${d.totIzin}</div>
+                            <div class="value">${d.totIzin || 0}</div>
                             <div class="desc">Santri di luar pondok</div>
                         </div>
                         <div class="dash-card">
                             <div class="title">Santri Sedang Sakit</div>
-                            <div class="value">${d.totSakit}</div>
+                            <div class="value">${d.totSakit || 0}</div>
                             <div class="desc">Dirawat di poskestren</div>
                         </div>
                     `;
 
+                    // Render Chart (Anti-Error)
                     if(window.chartDash) window.chartDash.destroy();
                     const ctx = document.getElementById('chartPelanggaranBaru').getContext('2d');
                     window.chartDash = new Chart(ctx, {
                         type: 'bar',
                         data: { 
-                            labels: d.chartPelLabels, 
+                            labels: d.chartPelLabels || ['Mgg 1', 'Mgg 2', 'Mgg 3', 'Mgg 4'], 
                             datasets: [{ 
                                 label: 'Jumlah Pelanggaran', 
-                                data: d.chartPelData, 
+                                data: d.chartPelData || [0,0,0,0], 
                                 backgroundColor: '#489744', 
                                 borderRadius: 5 
                             }] 
                         },
                         options: { responsive: true, plugins: { legend: { display: false } } }
                     });
+                } else {
+                    container.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding: 20px; color: #ef4444;">Gagal memuat statistik.</div>`;
                 }
-            }).catch(err => hideLoad());
+            }).catch(err => {
+                container.innerHTML = `<div style="grid-column: 1 / -1; text-align:center; padding: 20px; color: #ef4444;">Terjadi kesalahan jaringan.</div>`;
+            });
         }
 
         function loadTableData() {
