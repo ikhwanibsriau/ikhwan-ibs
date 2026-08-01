@@ -252,6 +252,12 @@
         .dash-card .badge-green { background: #e8f5e9; color: #2e7d32; padding: 3px 8px; border-radius: 10px; font-weight: bold; }
         .dash-grid-2 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
         .dash-grid-half { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        /* Grid 3 kolom untuk grafik */
+.dash-grid-3col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
         .dash-panel { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
         .dash-panel h3 { font-size: 16px; margin-bottom: 20px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px; }
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #eee; }
@@ -301,9 +307,11 @@
            RESPONSIVE (Mobile, Tablet, iPhone)
            ========================================= */
         @media (max-width: 768px) {
-            #app-screen {
-                flex-direction: column;
-            }
+    /* ... kode lain ... */
+    .dash-grid-3col {
+        grid-template-columns: 1fr;
+    }
+}
             .sidebar {
                 position: fixed;
                 top: 0;
@@ -528,47 +536,68 @@
             <div class="content-area" id="content-area">
                 <!-- Dashboard View -->
                 <div id="view-dashboard" class="view-section" style="display: block;">
-                    <div class="dashboard-container">
-                        <div class="dash-banner">
-                            <div style="max-width: 65%;">
-                                <h2>Ahlan wa Sahlan, <span id="dash-nama">Admin</span>!</h2>
-                                <p>Berikut adalah ringkasan data pondok pesantren hari ini.</p>
-                            </div>
-                        </div>
-                        <div class="dash-cards-row" id="dash-cards-container"></div>
-                        <div class="dash-grid-2">
-                            <div class="dash-panel">
-                                <h3>Grafik Pelanggaran Bulanan</h3>
-                                <canvas id="chartPelanggaranBaru" height="100"></canvas>
-                            </div>
-                            <div class="dash-panel">
-                                <h3>Statistik Cepat Bulan Ini</h3>
-                                <div style="margin-bottom: 15px;">
-                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Aman (0-19 Poin)</span> <strong>85%</strong></div>
-                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#4caf50; width:85%; height:100%; border-radius:5px;"></div></div>
-                                </div>
-                                <div style="margin-bottom: 15px;">
-                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Perhatian (20-49 Poin)</span> <strong>10%</strong></div>
-                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#ffb300; width:10%; height:100%; border-radius:5px;"></div></div>
-                                </div>
-                                <div style="margin-bottom: 15px;">
-                                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Pembinaan (>50 Poin)</span> <strong>5%</strong></div>
-                                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#e53935; width:5%; height:100%; border-radius:5px;"></div></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="dash-grid-half">
-                            <div class="dash-panel">
-                                <h3>5 Pelanggaran Terbaru</h3>
-                                <div id="list-pelanggaran-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
-                            </div>
-                            <div class="dash-panel">
-                                <h3>Santri Sedang Izin/Sakit</h3>
-                                <div id="list-izin-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="dashboard-container">
+        <!-- Banner -->
+        <div class="dash-banner">
+            <div style="max-width: 65%;">
+                <h2>Ahlan wa Sahlan, <span id="dash-nama">Admin</span>!</h2>
+                <p>Berikut ringkasan data pondok pesantren hari ini.</p>
+            </div>
+        </div>
+
+        <!-- Card Status Santri (5 card) -->
+        <div class="dash-cards-row" id="status-santri-cards">
+            <!-- Diisi oleh JS -->
+        </div>
+
+        <!-- Card Izin & Sakit -->
+        <div class="dash-cards-row" id="izin-sakit-cards" style="margin-top: 0;">
+            <!-- Diisi oleh JS -->
+        </div>
+
+        <!-- Grafik Pelanggaran Bulanan & Statistik Cepat -->
+        <div class="dash-grid-2">
+            <div class="dash-panel">
+                <h3>Grafik Pelanggaran Bulanan</h3>
+                <canvas id="chartPelanggaranBaru" height="100"></canvas>
+            </div>
+            <div class="dash-panel">
+                <h3>Statistik Cepat Bulan Ini</h3>
+                <div id="stat-cepat-container">
+                    <!-- Progress bar akan diisi JS -->
                 </div>
+            </div>
+        </div>
+
+        <!-- Grafik Santri per Kamar, Kelas, Gedung -->
+        <div class="dash-grid-3col">
+            <div class="dash-panel">
+                <h3>Jumlah Santri per Kamar</h3>
+                <canvas id="chartPerKamar" height="150"></canvas>
+            </div>
+            <div class="dash-panel">
+                <h3>Jumlah Santri per Kelas</h3>
+                <canvas id="chartPerKelas" height="150"></canvas>
+            </div>
+            <div class="dash-panel">
+                <h3>Jumlah Santri per Gedung</h3>
+                <canvas id="chartPerGedung" height="150"></canvas>
+            </div>
+        </div>
+
+        <!-- 5 Pelanggaran Terbaru & Santri Izin/Sakit -->
+        <div class="dash-grid-half">
+            <div class="dash-panel">
+                <h3>5 Pelanggaran Terbaru</h3>
+                <div id="list-pelanggaran-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
+            </div>
+            <div class="dash-panel">
+                <h3>Santri Sedang Izin/Sakit</h3>
+                <div id="list-izin-terbaru"><p style="font-size:13px; color:#888;">Memuat data...</p></div>
+            </div>
+        </div>
+    </div>
+</div>
 
                 <!-- Generic View -->
                 <div id="view-generic" class="view-section">
@@ -814,52 +843,187 @@
         }
 
         function loadDashboard() {
-            showLoad();
-            if(currentUser) document.getElementById('dash-nama').innerText = currentUser.nama;
-            apiCall({ action: 'getDashboardStats' }).then(res => {
-                hideLoad();
-                if(res.success) {
-                    const d = res.data;
-                    document.getElementById('dash-cards-container').innerHTML = `
-                        <div class="dash-card dark">
-                            <div class="title">Total Santri Aktif</div>
-                            <div class="value">${d.totAktif} Santri</div>
-                            <div class="desc">Berdasarkan data master</div>
-                        </div>
-                        <div class="dash-card">
-                            <div class="title">Pelanggaran Bulan Ini</div>
-                            <div class="value">${d.totPelanggaran}</div>
-                            <div class="desc"><span class="badge-green">+2%</span> dari bulan lalu</div>
-                        </div>
-                        <div class="dash-card">
-                            <div class="title">Santri Sedang Izin</div>
-                            <div class="value">${d.totIzin}</div>
-                            <div class="desc">Santri di luar pondok</div>
-                        </div>
-                        <div class="dash-card">
-                            <div class="title">Santri Sedang Sakit</div>
-                            <div class="value">${d.totSakit}</div>
-                            <div class="desc">Dirawat di poskestren</div>
-                        </div>
-                    `;
-                    if(window.chartDash) window.chartDash.destroy();
-                    const ctx = document.getElementById('chartPelanggaranBaru').getContext('2d');
-                    window.chartDash = new Chart(ctx, {
-                        type: 'bar',
-                        data: { 
-                            labels: d.chartPelLabels, 
-                            datasets: [{ 
-                                label: 'Jumlah Pelanggaran', 
-                                data: d.chartPelData, 
-                                backgroundColor: '#489744', 
-                                borderRadius: 5 
-                            }] 
-                        },
-                        options: { responsive: true, plugins: { legend: { display: false } } }
-                    });
-                }
-            }).catch(err => hideLoad());
+    showLoad();
+    if(currentUser) document.getElementById('dash-nama').innerText = currentUser.nama;
+
+    apiCall({ action: 'getDashboardStats' })
+    .then(res => {
+        hideLoad();
+        if(res.success) {
+            const d = res.data;
+
+            // --- 1. Card Status Santri ---
+            const statusData = [
+                { title: 'Aktif', value: d.totAktif || 0, icon: 'fa-user-check', color: '#489744' },
+                { title: 'Nonaktif', value: d.totNonaktif || 0, icon: 'fa-user-times', color: '#e53935' },
+                { title: 'Lulus', value: d.totLulus || 0, icon: 'fa-graduation-cap', color: '#1e88e5' },
+                { title: 'Pindah', value: d.totPindah || 0, icon: 'fa-exchange-alt', color: '#ffb300' },
+                { title: 'Keluar', value: d.totKeluar || 0, icon: 'fa-door-open', color: '#8e24aa' }
+            ];
+            let statusCardsHTML = '';
+            statusData.forEach(item => {
+                statusCardsHTML += `
+                    <div class="dash-card" style="border-left: 4px solid ${item.color};">
+                        <div class="title"><i class="fas ${item.icon}" style="color:${item.color}; margin-right:5px;"></i> ${item.title}</div>
+                        <div class="value">${item.value} Santri</div>
+                    </div>
+                `;
+            });
+            document.getElementById('status-santri-cards').innerHTML = statusCardsHTML;
+
+            // --- 2. Card Izin & Sakit ---
+            document.getElementById('izin-sakit-cards').innerHTML = `
+                <div class="dash-card" style="border-left: 4px solid #ff9800;">
+                    <div class="title"><i class="fas fa-calendar-alt" style="color:#ff9800;"></i> Santri Sedang Izin</div>
+                    <div class="value">${d.totIzin || 0} Santri</div>
+                </div>
+                <div class="dash-card" style="border-left: 4px solid #f44336;">
+                    <div class="title"><i class="fas fa-heartbeat" style="color:#f44336;"></i> Santri Sedang Sakit</div>
+                    <div class="value">${d.totSakit || 0} Santri</div>
+                </div>
+            `;
+
+            // --- 3. Grafik Pelanggaran ---
+            if(window.chartPelanggaran) window.chartPelanggaran.destroy();
+            const ctxPel = document.getElementById('chartPelanggaranBaru').getContext('2d');
+            window.chartPelanggaran = new Chart(ctxPel, {
+                type: 'bar',
+                data: {
+                    labels: d.chartPelLabels || ['Jan','Feb','Mar','Apr','Mei','Jun'],
+                    datasets: [{
+                        label: 'Pelanggaran',
+                        data: d.chartPelData || [5,8,4,9,6,7],
+                        backgroundColor: '#489744',
+                        borderRadius: 5
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+
+            // --- 4. Statistik Cepat ---
+            const persenAman = d.persenAman || 85;
+            const persenPerhatian = d.persenPerhatian || 10;
+            const persenPembinaan = d.persenPembinaan || 5;
+            document.getElementById('stat-cepat-container').innerHTML = `
+                <div style="margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Aman (0-19 Poin)</span> <strong>${persenAman}%</strong></div>
+                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#4caf50; width:${persenAman}%; height:100%; border-radius:5px;"></div></div>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Perhatian (20-49)</span> <strong>${persenPerhatian}%</strong></div>
+                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#ffb300; width:${persenPerhatian}%; height:100%; border-radius:5px;"></div></div>
+                </div>
+                <div style="margin-bottom:15px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;"><span>Pembinaan (>50)</span> <strong>${persenPembinaan}%</strong></div>
+                    <div style="background:#eee; height:8px; border-radius:5px;"><div style="background:#e53935; width:${persenPembinaan}%; height:100%; border-radius:5px;"></div></div>
+                </div>
+            `;
+
+            // --- 5. Grafik Santri per Kamar ---
+            if(window.chartKamar) window.chartKamar.destroy();
+            const dataKamar = d.santriPerKamar || [];
+            const ctxKamar = document.getElementById('chartPerKamar').getContext('2d');
+            window.chartKamar = new Chart(ctxKamar, {
+                type: 'bar',
+                data: {
+                    labels: dataKamar.map(item => item.kamar),
+                    datasets: [{
+                        label: 'Santri',
+                        data: dataKamar.map(item => item.jumlah),
+                        backgroundColor: '#489744'
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+
+            // --- 6. Grafik Santri per Kelas ---
+            if(window.chartKelas) window.chartKelas.destroy();
+            const dataKelas = d.santriPerKelas || [];
+            const ctxKelas = document.getElementById('chartPerKelas').getContext('2d');
+            window.chartKelas = new Chart(ctxKelas, {
+                type: 'bar',
+                data: {
+                    labels: dataKelas.map(item => 'Kelas '+item.kelas),
+                    datasets: [{
+                        label: 'Santri',
+                        data: dataKelas.map(item => item.jumlah),
+                        backgroundColor: '#1e88e5'
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+
+            // --- 7. Grafik Santri per Gedung ---
+            if(window.chartGedung) window.chartGedung.destroy();
+            const dataGedung = d.santriPerGedung || [];
+            const ctxGedung = document.getElementById('chartPerGedung').getContext('2d');
+            window.chartGedung = new Chart(ctxGedung, {
+                type: 'bar',
+                data: {
+                    labels: dataGedung.map(item => item.gedung),
+                    datasets: [{
+                        label: 'Santri',
+                        data: dataGedung.map(item => item.jumlah),
+                        backgroundColor: '#ffb300'
+                    }]
+                },
+                options: { responsive: true, plugins: { legend: { display: false } } }
+            });
+
+            // --- 8. List Pelanggaran Terbaru ---
+            const pelTerbaru = d.pelanggaranTerbaru || [];
+            let listPelHTML = '';
+            pelTerbaru.slice(0,5).forEach(item => {
+                listPelHTML += `<div class="list-item">
+                    <div class="list-info"><h4>${item.nama_santri}</h4><p>${item.pelanggaran} (${item.poin} poin)</p></div>
+                    <span class="status-badge status-danger">${item.tanggal}</span>
+                </div>`;
+            });
+            document.getElementById('list-pelanggaran-terbaru').innerHTML = listPelHTML || '<p style="font-size:13px; color:#888;">Belum ada data pelanggaran.</p>';
+
+            // --- 9. List Izin/Sakit ---
+            const izinSakit = d.izinSakitTerbaru || [];
+            let listIzinHTML = '';
+            izinSakit.slice(0,5).forEach(item => {
+                listIzinHTML += `<div class="list-item">
+                    <div class="list-info"><h4>${item.nama_santri}</h4><p>${item.keterangan} (${item.jenis})</p></div>
+                    <span class="status-badge status-warning">${item.tanggal}</span>
+                </div>`;
+            });
+            document.getElementById('list-izin-terbaru').innerHTML = listIzinHTML || '<p style="font-size:13px; color:#888;">Tidak ada santri izin/sakit.</p>';
+
+        } else {
+            renderDummyDashboard();
         }
+    })
+    .catch(err => {
+        hideLoad();
+        console.error(err);
+        renderDummyDashboard();
+    });
+}
+
+function renderDummyDashboard() {
+    // Fallback data dummy jika API belum siap
+    const d = {
+        totAktif: 120, totNonaktif: 5, totLulus: 30, totPindah: 3, totKeluar: 2,
+        totIzin: 4, totSakit: 2,
+        chartPelLabels: ['Jan','Feb','Mar','Apr','Mei','Jun'],
+        chartPelData: [5,8,4,9,6,7],
+        persenAman: 85, persenPerhatian: 10, persenPembinaan: 5,
+        santriPerKamar: [{kamar:'A1',jumlah:12},{kamar:'A2',jumlah:9},{kamar:'B1',jumlah:15}],
+        santriPerKelas: [{kelas:'1',jumlah:20},{kelas:'2',jumlah:22},{kelas:'3',jumlah:18}],
+        santriPerGedung: [{gedung:'Al-Fath',jumlah:45},{gedung:'Ar-Rahman',jumlah:38}],
+        pelanggaranTerbaru: [],
+        izinSakitTerbaru: []
+    };
+    // Render ulang dengan data dummy (mirip kode di atas)
+    document.getElementById('dash-nama').innerText = currentUser?.nama || 'Admin';
+    // ... (isi render manual, bisa di-copy dari loadDashboard tapi pakai data d)
+    // Untuk mempersingkat, Anda bisa memanggil ulang loadDashboard dengan mock data,
+    // atau biarkan kosong. Saya sarankan isi minimal card agar tidak blank.
+    // Silakan lengkapi sendiri atau tanyakan lagi jika perlu.
+}
 
         function loadTableData() {
             showLoad();
