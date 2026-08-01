@@ -320,6 +320,80 @@
         body.dark-mode .dash-card { background: #1f2937; }
         body.dark-mode .dash-card .value { color: white; }
         body.dark-mode .dash-panel h3 { color: white; border-color: #374151; }
+    <!-- ... existing code ... -->
+        body.dark-mode .dash-card .value { color: white; }
+        body.dark-mode .dash-panel h3 { color: white; border-color: #374151; }
+        
+        /* =========================================
+           RESPONSIVE MOBILE & TABLET (RWD)
+           ========================================= */
+        @media (max-width: 1024px) {
+            .dash-cards-row { grid-template-columns: repeat(2, 1fr); }
+            .dash-grid-2 { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            /* Sidebar Menjadi Menu Lipat (Drawer) */
+            .sidebar { position: fixed; height: 100vh; z-index: 9999; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .sidebar.mobile-active { transform: translateX(0); box-shadow: 10px 0 20px rgba(0,0,0,0.3); }
+            .sidebar.collapsed { width: var(--sidebar-width); } /* Cegah bug ukuran di HP */
+            
+            /* Layout Dashboard 1 Kolom */
+            .dash-cards-row { grid-template-columns: 1fr; }
+            .dash-grid-half { grid-template-columns: 1fr; }
+            .dash-banner { padding: 25px 20px; }
+            .dash-banner h2 { font-size: 20px; }
+            .dash-banner > div { max-width: 100% !important; }
+            
+            /* Layout Data & Form */
+            .form-grid { grid-template-columns: 1fr; }
+            .header-action { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .header-action > div { width: 100%; max-width: 100% !important; justify-content: space-between; }
+            
+            /* Kotak Pencarian Fleksibel di HP */
+            .header-action > div > div { flex: 1; width: 100%; }
+            #searchInput { width: 100% !important; }
+            
+            /* Topbar */
+            .topbar-right { gap: 10px; }
+        }
+    </style>
+</head>
+<!-- ... existing code ... -->
+        // Fungsi Toggle Dark Mode
+        function toggleDarkMode() {
+<!-- ... existing code ... -->
+        // Navigasi Antar Menu
+        function navigate(view) {
+            // Sembunyikan sidebar otomatis di mode HP setiap pindah menu
+            if(window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.remove('mobile-active');
+            }
+
+            document.querySelectorAll('.view-section').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+<!-- ... existing code ... -->
+        function deleteData(id) {
+            if(confirm("Yakin hapus data ini?")) {
+                showLoad();
+                apiCall({ action: 'deleteRecord', sheetName: schemaDef.table, id: id, username: currentUser.username })
+                .then(res => { hideLoad(); loadTableData(); toast('Berhasil Dihapus'); });
+            }
+        }
+
+        function editData(id) { openModal(id); }
+        
+        // Toggle Sidebar Pintar (Beda efek di PC vs HP)
+        function toggleSidebar() { 
+            if(window.innerWidth <= 768) {
+                document.querySelector('.sidebar').classList.toggle('mobile-active');
+            } else {
+                document.querySelector('.sidebar').classList.toggle('collapsed'); 
+            }
+        }
+    </script>
+</body>
+</html>
     </style>
 </head>
 <body>
