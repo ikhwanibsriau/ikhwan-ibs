@@ -671,17 +671,18 @@
                 cols: ['tanggal', 'nama_santri', 'pelanggaran', 'poin', 'tindakan']
             }
             perizinan: {
-                title: "Data Perizinan & Sakit", table: "Perizinan",
+                title: "Data Perizinan", table: "Perizinan",
                 fields: [
                     { name: 'id', label: 'ID', type: 'hidden' },
-                    { name: 'tanggal', label: 'Tanggal Mulai', type: 'date', req: true },
+                    { name: 'tanggal', label: 'Tanggal Izin', type: 'date', req: true },
+                    { name: 'tanggal_kembali', label: 'Tanggal Kembali', type: 'date' },
                     { name: 'nama_santri', label: 'Nama Santri', type: 'autocomplete', req: true, full: true },
-                    { name: 'jenis', label: 'Jenis', type: 'select', options: ['Izin', 'Sakit'], req: true },
-                    { name: 'keterangan', label: 'Keterangan / Alasan', type: 'text', full: true, req: true },
-                    { name: 'status', label: 'Status', type: 'select', options: ['Pending', 'Disetujui', 'Ditolak', 'Selesai/Kembali'], req: true }
+                    { name: 'keterangan', label: 'Keterangan (Sakit/Pulang/dll)', type: 'text', req: true },
+                    { name: 'status', label: 'Status', type: 'select', options: ['Pending', 'Disetujui', 'Ditolak', 'Selesai/Kembali'], req: true },
+                    { name: 'catatan', label: 'Catatan Tambahan', type: 'text', full: true }
                 ],
-                tableHeaders: ['Tanggal', 'Nama Santri', 'Jenis', 'Keterangan', 'Status'],
-                cols: ['tanggal', 'nama_santri', 'jenis', 'keterangan', 'status']
+                tableHeaders: ['Tanggal', 'Tgl Kembali', 'Nama Santri', 'Keterangan', 'Status', 'Catatan'],
+                cols: ['tanggal', 'tanggal_kembali', 'nama_santri', 'keterangan', 'status', 'catatan']
             }
         };
         };
