@@ -625,8 +625,8 @@
         let currentModule = '';
         let moduleData = [];
         let schemaDef = {};
-        let listNamaSantri = [];
-        let listNamaSantriLoaded = false;
+        let santriRoster = []; // [{ nama, kelas }] - dipakai untuk autocomplete + filter kelas
+        let santriRosterLoaded = false;
         let currentPage = 1;
         const rowsPerPage = 20;
 
@@ -661,14 +661,26 @@
                 fields: [
                     { name: 'id', label: 'ID', type: 'hidden' },
                     { name: 'tanggal', label: 'Tanggal', type: 'date', req: true },
-                    { name: 'nama_santri', label: 'Nama Santri', type: 'autocomplete', req: true },
+                    { name: 'kelas_filter', label: 'Kelas Santri', type: 'select', options: ['1','2','3','4','5','6'] },
+                    { name: 'nama_santri', label: 'Nama Santri', type: 'autocomplete', req: true, full: true },
+                    { name: 'poin', label: 'Keterangan', type: 'select', req: true, options: ['Surat Hijau','Surat Kuning','Surat Merah','SP-1','SP-2','SP-2.1','SP-2.2','SP-3 (DO)'] },
                     { name: 'pelanggaran', label: 'Pelanggaran', type: 'text', full: true, req: true },
-                    { name: 'poin', label: 'Poin', type: 'number', req: true },
                     { name: 'tindakan', label: 'Tindak Lanjut', type: 'text' }
                 ],
+                tableHeaders: ['Tanggal', 'Nama Santri', 'Pelanggaran', 'Keterangan', 'Tindak Lanjut'],
                 cols: ['tanggal', 'nama_santri', 'pelanggaran', 'poin', 'tindakan']
             }
         };
+
+        // Format tanggal untuk TAMPILAN tabel saja (dd/mm/yyyy), tidak mengubah data asli.
+        // Data asli dari backend sudah "yyyy-MM-dd" polos (tanpa jam).
+        function formatTanggalTampil(value) {
+            if (!value) return '-';
+            const datePart = String(value).split('T')[0]; // jaga-jaga kalau masih ada sisa jam
+            const parts = datePart.split('-');
+            if (parts.length !== 3) return value;
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
 
         const showLoad = () => document.getElementById('loader').style.display = 'flex';
         const hideLoad = () => document.getElementById('loader').style.display = 'none';
@@ -690,15 +702,64 @@
             }
         }
 
-        // Ambil daftar nama santri untuk autocomplete, HANYA saat dibutuhkan
+        // Ambil daftar santri (nama + kelas) untuk autocomplete & filter kelas, HANYA saat dibutuhkan
         // (dipanggil lazy saat modal Pelanggaran dibuka, bukan saat login)
-        async function ensureNamaSantriList() {
-            if (listNamaSantriLoaded) return;
+        async function ensureSantriRoster() {
+            if (santriRosterLoaded) return;
             const res = await apiCall({ action: 'getTableData', sheetName: 'Santri' });
             if (res.success) {
-                listNamaSantri = res.data.map(s => s.nama);
-                listNamaSantriLoaded = true;
+                santriRoster = res.data.map(s => ({ nama: s.nama, kelas: String(s.kelas || '').trim() }));
+                santriRosterLoaded = true;
             }
+        }
+
+        // Cari & render daftar rekomendasi nama santri, difilter berdasarkan kelas terpilih (jika ada)
+        function renderNamaSantriSuggestions(query) {
+            const container = document.getElementById('suggest_nama_santri');
+            if (!container) return;
+            const kelasSel = document.getElementById('f_kelas_filter');
+            const kelasVal = kelasSel ? kelasSel.value : '';
+            let pool = santriRoster;
+            if (kelasVal) pool = pool.filter(s => s.kelas === kelasVal);
+
+            const q = (query || '').trim().toLowerCase();
+            let matches = q ? pool.filter(s => s.nama.toLowerCase().includes(q)) : pool;
+            matches = matches.slice(0, 30);
+
+            if (matches.length === 0) {
+                container.innerHTML = `<div class="suggestion-empty">Tidak ada santri ditemukan${kelasVal ? ' di kelas ' + kelasVal : ''}</div>`;
+            } else {
+                container.innerHTML = matches.map(s =>
+                    `<div class="suggestion-item" onclick="selectNamaSantri('${s.nama.replace(/'/g, "\\'")}')">${s.nama}</div>`
+                ).join('');
+            }
+            container.style.display = 'block';
+        }
+
+        function selectNamaSantri(nama) {
+            const input = document.getElementById('f_nama_santri');
+            if (input) input.value = nama;
+            const container = document.getElementById('suggest_nama_santri');
+            if (container) container.style.display = 'none';
+        }
+
+        function handleNamaSantriInput(e) {
+            renderNamaSantriSuggestions(e.target.value);
+        }
+
+        function hideNamaSantriSuggestions() {
+            setTimeout(() => {
+                const container = document.getElementById('suggest_nama_santri');
+                if (container) container.style.display = 'none';
+            }, 150); // delay biar klik pada saran sempat kedaftar sebelum ditutup
+        }
+
+        // Saat kelas diganti, reset nama yang sudah diketik (karena daftarnya berubah)
+        function handleKelasFilterChange() {
+            const namaInput = document.getElementById('f_nama_santri');
+            if (namaInput) namaInput.value = '';
+            const container = document.getElementById('suggest_nama_santri');
+            if (container) container.style.display = 'none';
         }
 
         // Cek session saat load
