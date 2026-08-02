@@ -1,0 +1,395 @@
+// ============================================================
+// SCRIPT: code.gs (REST API BACKEND) - FIXED v2
+// Perbaikan:
+// 1. ID baru dihitung dari MAX(id) + 1, bukan rows.length (anti-bentrok)
+// 2. Header sheet dinormalisasi (trim + lowercase) di semua fungsi
+//    supaya tidak masalah mau kolom ditulis "NIS", "Nis", atau "nis"
+// 3. CORS TIDAK pakai setHeader() (method itu tidak ada di
+//    ContentService.TextOutput dan akan error). CORS aman selama:
+//    - Deploy: Web app, Execute as Me, Who has access: Anyone
+//    - Frontend fetch pakai Content-Type: text/plain;charset=utf-8
+// ============================================================
+
+// ---------- HELPER ----------
+
+// Normalisasi nama kolom: trim spasi + lowercase
+function normalizeKey_(key) {
+  return String(key).trim().toLowerCase();
+}
+
+// Ambil array header yang sudah dinormalisasi dari baris pertama sheet
+function getNormalizedHeaders_(rows) {
+  return rows[0].map(function(h) {
+    return normalizeKey_(h || "");
+  });
+}
+
+// Cari ID baru yang aman (MAX id yang ada + 1), anti tabrakan
+// walau sudah ada data yang dihapus sebelumnya
+function getNextId_(rows) {
+
+  var maxId = 0;
+
+  for (var i = 1; i < rows.length; i++) {
+
+    var idVal = parseInt(rows[i][0],10);
+
+    if (!isNaN(idVal) && idVal > maxId) {
+      maxId = idVal;
+    }
+
+  }
+
+  return maxId + 1;
+
+}
+function getSheetIgnoreCase_(name) {
+
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+
+  for (var i = 0; i < sheets.length; i++) {
+
+    if (
+      sheets[i].getName().toLowerCase() ==
+      String(name).toLowerCase()
+    ) {
+      return sheets[i];
+    }
+
+  }
+
+  return null;
+
+}
+// ---------- ENTRY POINT ----------
+
+function doGet(e) {
+  var output = ContentService.createTextOutput(JSON.stringify({ status: "API SIM AKTIF", message: "Gunakan POST request." }));
+  output.setMimeType(ContentService.MimeType.JSON);
+  return output;
+}
+
+function doPost(e) {
+  try {
+    var request = JSON.parse(e.postData.contents);
+    var action = request.action;
+    var response = { success: false, message: "Action tidak dikenali." };
+
+    if (action === 'login') {
+      response = login_(request);
+    } else if (action === 'getTableData') {
+      response = getTableData_(request);
+    } else if (action === 'saveRecord') {
+      response = saveRecord_(request);
+    } else if (action === 'deleteRecord') {
+      response = deleteRecord_(request);
+    } else if (action === 'getDashboardStats') {
+      response = getDashboardStats_(request);
+    }
+
+    var output = ContentService.createTextOutput(JSON.stringify(response));
+    output.setMimeType(ContentService.MimeType.JSON);
+    return output;
+
+  } catch (err) {
+    var output = ContentService.createTextOutput(JSON.stringify({ success: false, message: "Error: " + err.toString() }));
+    output.setMimeType(ContentService.MimeType.JSON);
+    return output;
+  }
+}
+
+// ---------- LOGIN ----------
+
+function login_(data) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("pengguna");
+  if (!sheet) return { success: false, message: "Sheet pengguna tidak ditemukan" };
+
+  var rows = sheet.getDataRange().getValues();
+  var headers = getNormalizedHeaders_(rows);
+  var idxUser = headers.indexOf("username");
+  var idxPass = headers.indexOf("password");
+  var idxNama = headers.indexOf("nama");
+  var idxRole = headers.indexOf("role");
+
+  for (var i = 1; i < rows.length; i++) {
+    var row = rows[i];
+    if (
+        String(row[idxUser]).trim().toLowerCase() ==
+        String(data.username).trim().toLowerCase() &&
+        String(row[idxPass]).trim() ==
+        String(data.password).trim()
+        )
+      return {
+        success: true,
+        user: {
+          username: String(row[idxUser]).trim(),
+          nama: String(row[idxNama]).trim(),
+          role: String(row[idxRole]).trim()
+        }
+      };
+    }
+    return { success: false, message: "Username atau password salah" };
+  }
+
+// ---------- GENERIC CRUD ----------
+
+function getTableData_(data) {
+  var sheet = getSheetIgnoreCase_(data.sheetName);
+  function getSheetIgnoreCase_(name){
+  
+  if (!sheet) return { success: false, message: "Sheet " + data.sheetName + " tidak ditemukan" };
+
+  var rows = sheet.getDataRange().getValues();
+  if (rows.length < 2) return { success: true, data: [] };
+
+  var headers = getNormalizedHeaders_(rows);
+  var tz = Session.getScriptTimeZone();
+  var result = [];
+  for (var i = 1; i < rows.length; i++) {
+    if (!rows[i][0]) continue;
+    var obj = {};
+    for (var j = 0; j < headers.length; j++) {
+      var cellVal = rows[i][j];
+      // Kolom tanggal di Sheets tersimpan sebagai object Date -> format
+      // jadi "yyyy-MM-dd" polos (tanpa jam) supaya cocok dengan <input type="date">
+      if (cellVal instanceof Date) {
+        cellVal = Utilities.formatDate(cellVal, tz, "yyyy-MM-dd");
+      }
+      obj[headers[j]] = cellVal;
+    }
+    result.push(obj);
+  }
+  return { success: true, data: result };
+}
+
+function saveRecord_(data) {
+  var sheet = getSheetIgnoreCase_(data.sheetName);
+  function getSheetIgnoreCase_(name){
+  
+  if (!sheet) return { success: false, message: "Sheet tidak ditemukan" };
+
+  var rows = sheet.getDataRange().getValues();
+  var headers = getNormalizedHeaders_(rows);
+  var record = data.data;
+  var id = record.id;
+
+  if (id) {
+    // ----- UPDATE (batch write, 1x request per baris, bukan per kolom) -----
+    for (var i = 1; i < rows.length; i++) {
+      if (String(rows[i][0]) === String(id)) {
+        var updatedRow = rows[i].slice(); // copy baris lama sebagai basis
+        for (var j = 0; j < headers.length; j++) {
+          var key = headers[j];
+          if (key === 'id') continue; // kolom ID tidak boleh ditimpa
+          if (record.hasOwnProperty(key)) {
+          updatedRow[j] = record[key];
+          }
+        }
+        sheet.getRange(i + 1, 1, 1, headers.length).setValues([updatedRow]);
+        return { success: true, message: "Data berhasil diupdate" };
+      }
+    }
+    return { success: false, message: "ID tidak ditemukan" };
+  } else {
+    // ----- INSERT -----
+    var newId = getNextId_(rows);
+        var newRow = [newId];
+    for (var k = 1; k < headers.length; k++) {
+      newRow.push(record[headers[k]] || '');
+    }
+    sheet.getRange(sheet.getLastRow()+1,1,1,newRow.length).setValues([newRow]);
+    return { success: true, message: "Data berhasil ditambahkan", id: newId };
+  }
+}
+
+function deleteRecord_(data) {
+  var sheet = getSheetIgnoreCase_(data.sheetName);
+  function getSheetIgnoreCase_(name){
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets();
+
+  for(var i=0;i<sheets.length;i++){
+      if(
+      sheets[i].getName().toLowerCase()==
+      String(name).toLowerCase()
+      ){
+          return sheets[i];
+      }
+  }
+
+  return null;
+}
+  if (!sheet) return { success: false, message: "Sheet tidak ditemukan" };
+
+  var rows = sheet.getDataRange().getValues();
+  for (var i = 1; i < rows.length; i++) {
+    if (String(rows[i][0]) === String(data.id)) {
+      sheet.deleteRow(i + 1);
+      return { success: true, message: "Data berhasil dihapus" };
+    }
+  }
+  return { success: false, message: "ID tidak ditemukan" };
+}
+
+// ---------- DASHBOARD ----------
+
+function getDashboardStats_(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheetSantri = ss.getSheetByName("Santri");
+  var sheetPelanggaran = ss.getSheetByName("Pelanggaran");
+  var sheetPerizinan = ss.getSheetByName("Perizinan");
+
+  if (!sheetSantri || !sheetPelanggaran || !sheetPerizinan) 
+    {return { success: false, message: "Sheet tidak ditemukan (Santri, Pelanggaran, Perizinan)." };
+  }
+
+  var dataSantri = sheetSantri.getDataRange().getValues();
+  var headersSantri = getNormalizedHeaders_(dataSantri);
+  var idxStatus = headersSantri.indexOf("status");
+  if (idxStatus === -1) {
+    return {
+        success:false,
+        message:"Kolom STATUS tidak ditemukan pada sheet Santri."
+    };
+}
+  var idxKamar = headersSantri.indexOf("kamar");
+  var idxKelas = headersSantri.indexOf("kelas");
+  var idxAsrama = headersSantri.indexOf("asrama");
+  var idxNamaSantri = headersSantri.indexOf("nama");
+
+  var totAktif = 0, totNonaktif = 0, totLulus = 0, totPindah = 0, totKeluar = 0;
+  var kamarCount = {}, kelasCount = {}, gedungCount = {};
+
+  for (var i = 1; i < dataSantri.length; i++) {
+    var row = dataSantri[i];
+    if (!row[idxStatus]) continue;
+    var status = row[idxStatus].toString().trim().toLowerCase();
+    var kamar = row[idxKamar] ? row[idxKamar].toString().trim() : "";
+    var kelas = row[idxKelas] ? row[idxKelas].toString().trim() : "";
+    var gedung = row[idxAsrama] ? row[idxAsrama].toString().trim() : "";
+
+    if (status === "aktif") totAktif++;
+    else if (status === "nonaktif") totNonaktif++;
+    else if (status === "lulus") totLulus++;
+    else if (status === "pindah") totPindah++;
+    else if (status === "keluar") totKeluar++;
+
+    if (status === "aktif") {
+      if (kamar) kamarCount[kamar] = (kamarCount[kamar] || 0) + 1;
+      if (kelas) kelasCount[kelas] = (kelasCount[kelas] || 0) + 1;
+      if (gedung) gedungCount[gedung] = (gedungCount[gedung] || 0) + 1;
+    }
+  }
+
+  var dataPel = sheetPelanggaran.getDataRange().getValues();
+  var headersPel = getNormalizedHeaders_(dataPel);
+  var idxTanggal = headersPel.indexOf("tanggal");
+  var idxNama = headersPel.indexOf("nama_santri");
+  var idxPelanggaran = headersPel.indexOf("pelanggaran");
+  var idxKeterangan = headersPel.indexOf("keterangan");
+
+if (idxKeterangan == -1) {
+    idxKeterangan = headersPel.indexOf("poin");
+}
+
+  var now = new Date();
+  var currMonth = now.getMonth() + 1;
+  var currYear = now.getFullYear();
+  var totPelanggaranBulanIni = 0;
+  var monthlyCount = {};
+  var pelanggaranTerbaru = [];
+  // Hitung jumlah kasus per kategori Keterangan, khusus bulan berjalan
+  var keteranganCount = {
+    "Surat Hijau": 0, "Surat Kuning": 0, "Surat Merah": 0,
+    "SP-1": 0, "SP-2": 0, "SP-2.1": 0, "SP-2.2": 0, "SP-3 (DO)": 0
+  };
+
+  for (var j = 1; j < dataPel.length; j++) {
+    var rowPel = dataPel[j];
+    var tgl = new Date(rowPel[idxTanggal]);
+    if (isNaN(tgl.getTime())) continue;
+
+    var nama = rowPel[idxNama] ? rowPel[idxNama].toString().trim() : "";
+    var keterangan = rowPel[idxKeterangan] ? rowPel[idxKeterangan].toString().trim() : "";
+    var key = tgl.getFullYear() + "-" + ("0" + (tgl.getMonth() + 1)).slice(-2);
+
+    if (tgl.getMonth() + 1 === currMonth && tgl.getFullYear() === currYear) {
+      totPelanggaranBulanIni++;
+      if (keteranganCount.hasOwnProperty(keterangan)) keteranganCount[keterangan]++;
+    }
+
+    monthlyCount[key] = (monthlyCount[key] || 0) + 1;
+
+    pelanggaranTerbaru.push({
+      nama_santri: nama,
+      pelanggaran: rowPel[idxPelanggaran] ? rowPel[idxPelanggaran].toString() : "",
+      keterangan: keterangan,
+      tanggal: Utilities.formatDate(tgl, Session.getScriptTimeZone(), "yyyy-MM-dd")
+    });
+  }
+
+  pelanggaranTerbaru.sort(function(a, b) { return new Date(b.tanggal) - new Date(a.tanggal); });
+  pelanggaranTerbaru = pelanggaranTerbaru.slice(0, 5);
+
+  var months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  var chartLabels = [], chartData = [];
+  for (var m = 5; m >= 0; m--) {
+    var d = new Date(currYear, currMonth - 1 - m, 1);
+    var label = months[d.getMonth()];
+    var key = d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2);
+    chartLabels.push(label);
+    chartData.push(monthlyCount[key] || 0);
+  }
+
+  var dataIzin = sheetPerizinan.getDataRange().getValues();
+  var headersIzin = getNormalizedHeaders_(dataIzin);
+  var idxJenis = headersIzin.indexOf("jenis");
+  var idxStatusIzin = headersIzin.indexOf("status");
+  var idxNamaIzin = headersIzin.indexOf("nama_santri");
+  var idxTglIzin = headersIzin.indexOf("tanggal");
+  var idxKet = headersIzin.indexOf("keterangan");
+
+  var totIzin = 0, totSakit = 0;
+  var izinSakitTerbaru = [];
+  for (var p = 1; p < dataIzin.length; p++) {
+    var rowIzin = dataIzin[p];
+    var jenis = rowIzin[idxJenis] ? rowIzin[idxJenis].toString().trim().toLowerCase() : "";
+    var statusIzin = rowIzin[idxStatusIzin] ? rowIzin[idxStatusIzin].toString().trim().toLowerCase() : "";
+    if (statusIzin !== "disetujui") continue;
+
+    if (jenis === "izin") totIzin++;
+    else if (jenis === "sakit") totSakit++;
+
+    izinSakitTerbaru.push({
+      nama_santri: rowIzin[idxNamaIzin] || "",
+      jenis: jenis,
+      keterangan: rowIzin[idxKet] || "-",
+      tanggal: rowIzin[idxTglIzin] ? Utilities.formatDate(new Date(rowIzin[idxTglIzin]), Session.getScriptTimeZone(), "yyyy-MM-dd") : "-"
+    });
+  }
+  izinSakitTerbaru.sort(function(a, b) { return new Date(b.tanggal) - new Date(a.tanggal); });
+  izinSakitTerbaru = izinSakitTerbaru.slice(0, 5);
+
+  return {
+    success: true,
+    data: {
+      totAktif: totAktif,
+      totNonaktif: totNonaktif,
+      totLulus: totLulus,
+      totPindah: totPindah,
+      totKeluar: totKeluar,
+      totIzin: totIzin,
+      totSakit: totSakit,
+      totPelanggaran: totPelanggaranBulanIni,
+      chartPelLabels: chartLabels,
+      chartPelData: chartData,
+      keteranganCount: keteranganCount,
+      santriPerKamar: Object.keys(kamarCount).map(function(k) { return {kamar: k, jumlah: kamarCount[k]}; }),
+      santriPerKelas: Object.keys(kelasCount).map(function(k) { return {kelas: k, jumlah: kelasCount[k]}; }),
+      santriPerGedung: Object.keys(gedungCount).map(function(g) { return {gedung: g, jumlah: gedungCount[g]}; }),
+      pelanggaranTerbaru: pelanggaranTerbaru,
+      izinSakitTerbaru: izinSakitTerbaru
+    }
+  };
+}
