@@ -626,6 +626,7 @@
         let moduleData = [];
         let schemaDef = {};
         let listNamaSantri = [];
+        let listNamaSantriLoaded = false;
         let currentPage = 1;
         const rowsPerPage = 20;
 
@@ -689,6 +690,17 @@
             }
         }
 
+        // Ambil daftar nama santri untuk autocomplete, HANYA saat dibutuhkan
+        // (dipanggil lazy saat modal Pelanggaran dibuka, bukan saat login)
+        async function ensureNamaSantriList() {
+            if (listNamaSantriLoaded) return;
+            const res = await apiCall({ action: 'getTableData', sheetName: 'Santri' });
+            if (res.success) {
+                listNamaSantri = res.data.map(s => s.nama);
+                listNamaSantriLoaded = true;
+            }
+        }
+
         // Cek session saat load
         window.onload = () => {
             const savedUser = localStorage.getItem('sim_user');
@@ -748,9 +760,6 @@
             if(currentUser && currentUser.role === 'Super Admin') {
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'flex');
             }
-            apiCall({ action: 'getTableData', sheetName: 'Santri' }).then(res => {
-                if(res.success) listNamaSantri = res.data.map(s => s.nama);
-            });
             navigate('dashboard');
         }
 
@@ -944,7 +953,15 @@
             renderTable(filteredData);
         }
         
-        function openModal(id = null) {
+        async function openModal(id = null) {
+            // Kalau ada field autocomplete (mis. Pelanggaran), pastikan daftar nama santri sudah siap
+            const hasAutocomplete = schemaDef.fields.some(f => f.type === 'autocomplete');
+            if (hasAutocomplete && !listNamaSantriLoaded) {
+                showLoad();
+                await ensureNamaSantriList();
+                hideLoad();
+            }
+
             document.getElementById('genericModal').style.display = 'flex';
             const fieldsContainer = document.getElementById('form-fields');
             fieldsContainer.innerHTML = '';
