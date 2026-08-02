@@ -659,13 +659,21 @@
             pelanggaran: {
                 title: "Data Pelanggaran", table: "Pelanggaran",
                 fields: [
-                    { name: 'id', label: 'ID', type: 'hidden' },
-                    { name: 'tanggal', label: 'Tanggal', type: 'date', req: true },
-                    { name: 'kelas_filter', label: 'Kelas Santri', type: 'select', options: ['1','2','3','4','5','6'] },
-                    { name: 'nama_santri', label: 'Nama Santri', type: 'autocomplete', req: true, full: true },
-                    { name: 'poin', label: 'Keterangan', type: 'select', req: true, options: ['Surat Hijau','Surat Kuning','Surat Merah','SP-1','SP-2','SP-2.1','SP-2.2','SP-3 (DO)'] },
-                    { name: 'pelanggaran', label: 'Pelanggaran', type: 'text', full: true, req: true },
-                    { name: 'tindakan', label: 'Tindak Lanjut', type: 'text' }
+                    {
+                    name:'keterangan',
+                    label:'Keterangan',
+                    type:'select',
+                    options:[
+                        'Surat Hijau',
+                          'Surat Kuning',
+                          'Surat Merah',
+                          'SP-1',
+                          'SP-2',
+                          'SP-2.1',
+                          'SP-2.2',
+                          'SP-3 (DO)'
+                        ]
+                    }
                 ],
                 tableHeaders: ['Tanggal', 'Nama Santri', 'Pelanggaran', 'Keterangan', 'Tindak Lanjut'],
                 cols: ['tanggal', 'nama_santri', 'pelanggaran', 'poin', 'tindakan']
@@ -1031,10 +1039,10 @@
         async function openModal(id = null) {
             // Kalau ada field autocomplete (mis. Pelanggaran), pastikan daftar nama santri sudah siap
             const hasAutocomplete = schemaDef.fields.some(f => f.type === 'autocomplete');
-            if (hasAutocomplete && !listNamaSantriLoaded) {
-                showLoad();
-                await ensureNamaSantriList();
-                hideLoad();
+            if (hasAutocomplete && !santriRosterLoaded) {
+            showLoad();
+            await ensureSantriRoster();
+            hideLoad();
             }
 
             document.getElementById('genericModal').style.display = 'flex';
@@ -1065,16 +1073,36 @@
 
         function closeModal() { document.getElementById('genericModal').style.display = 'none'; }
 
-        function submitForm(e) {
-            e.preventDefault();
-            let data = {};
-            schemaDef.fields.forEach(f => { data[f.name] = document.getElementById(`f_${f.name}`).value; });
-            showLoad();
-            apiCall({ action: 'saveRecord', sheetName: schemaDef.table, data: data, username: currentUser.username })
-            .then(res => {
-                hideLoad(); closeModal(); loadTableData(); toast('Berhasil Disimpan');
-            });
+        function submitForm(e){
+    e.preventDefault();
+
+    let data = {};
+
+    schemaDef.fields.forEach(f=>{
+        if(f.name!="kelas_filter"){
+            data[f.name]=document.getElementById(`f_${f.name}`).value;
         }
+    });
+
+    showLoad();
+
+    apiCall({
+        action:"saveRecord",
+        sheetName:schemaDef.table,
+        data:data,
+        username:currentUser.username
+    }).then(res=>{
+        hideLoad();
+
+        if(res.success){
+            closeModal();
+            loadTableData();
+            toast("Berhasil Disimpan");
+        }else{
+            toast(res.message,"error");
+        }
+    });
+}
 
         function deleteData(id) {
             if(confirm("Yakin hapus data ini?")) {
