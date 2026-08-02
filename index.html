@@ -670,6 +670,20 @@
                 tableHeaders: ['Tanggal', 'Nama Santri', 'Pelanggaran', 'Keterangan', 'Tindak Lanjut'],
                 cols: ['tanggal', 'nama_santri', 'pelanggaran', 'poin', 'tindakan']
             }
+            perizinan: {
+                title: "Data Perizinan & Sakit", table: "Perizinan",
+                fields: [
+                    { name: 'id', label: 'ID', type: 'hidden' },
+                    { name: 'tanggal', label: 'Tanggal Mulai', type: 'date', req: true },
+                    { name: 'nama_santri', label: 'Nama Santri', type: 'autocomplete', req: true, full: true },
+                    { name: 'jenis', label: 'Jenis', type: 'select', options: ['Izin', 'Sakit'], req: true },
+                    { name: 'keterangan', label: 'Keterangan / Alasan', type: 'text', full: true, req: true },
+                    { name: 'status', label: 'Status', type: 'select', options: ['Pending', 'Disetujui', 'Ditolak', 'Selesai/Kembali'], req: true }
+                ],
+                tableHeaders: ['Tanggal', 'Nama Santri', 'Jenis', 'Keterangan', 'Status'],
+                cols: ['tanggal', 'nama_santri', 'jenis', 'keterangan', 'status']
+            }
+        };
         };
 
         // Format tanggal untuk TAMPILAN tabel saja (dd/mm/yyyy), tidak mengubah data asli.
@@ -1037,11 +1051,11 @@
                         ${f.options.map(o => `<option value="${o}" ${val==o?'selected':''}>${o}</option>`).join('')}
                     </select>`;
                 } else if (f.type === 'autocomplete') {
-                    html += `<input type="text" id="f_${f.name}" list="list_${f.name}" class="form-control" value="${val}" ${f.req?'required':''} autocomplete="off">
-                    <datalist id="list_${f.name}">
-                        ${listNamaSantri.map(n => `<option value="${n}">`).join('')}
-                    </datalist>`;
-                } else {
+    html += `<input type="text" id="f_${f.name}" list="list_${f.name}" class="form-control" value="${val}" ${f.req?'required':''} autocomplete="off">
+    <datalist id="list_${f.name}">
+        ${santriRoster.map(s => `<option value="${s.nama}">`).join('')}
+    </datalist>`;
+} else {
                     html += `<input type="${f.type}" id="f_${f.name}" class="form-control" value="${val}" ${f.req?'required':''}>`;
                 }
                 html += `</div>`;
